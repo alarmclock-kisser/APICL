@@ -4,6 +4,45 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>APICL.favicon.ico</ApplicationIcon>
+    <PackageIcon>APICL.favicon.bmp</PackageIcon>
+    <IncludeSymbols>True</IncludeSymbols>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="swagger.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="APICL.favicon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\APICL.Shared\Ressources\Icon\APICL.favicon.bmp">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <OpenApiReference Include="swagger.json" Options="/generateDtoTypes:false /AdditionalNamespaceUsages:APICL.Shared, Microsoft.AspNetCore.Mvc" ClassName="InternalClient" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="7.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NSwag.ApiDescription.Client" Version="13.18.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\APICL.Shared\APICL.Shared.csproj" />
+  </ItemGroup>
 
 </Project>

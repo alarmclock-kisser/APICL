@@ -1,6 +1,6 @@
 ﻿using APICL.OpenCl;
 
-namespace Fractality.Shared
+namespace APICL.Shared
 {
 	public class OpenClDeviceInfo
 	{

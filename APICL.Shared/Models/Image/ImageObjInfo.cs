@@ -18,10 +18,16 @@ namespace APICL.Shared
 
         public string Entry { get; set; } = string.Empty;
 
-        public int ProcessingTime { get; set; } = -1;
+
+        public TimeSpan LastProcessingTimeSpan = TimeSpan.Zero;
+        public string LastProcessingTime { get; set; } = string.Empty;
+       
+        public TimeSpan LastLoadingTimeSpan = TimeSpan.Zero;
+        public string LastLoadingTime { get; set; } = string.Empty;
 
 
-        public ImageObjInfo(ImageObj? obj)
+
+        public ImageObjInfo(ImageObj? obj, TimeSpan? loadingTime = null, TimeSpan? executionTime = null)
         {
             if (obj == null)
             {
@@ -38,6 +44,18 @@ namespace APICL.Shared
             this.SizeInBytes = obj.SizeInBytes;
             this.Pointer = obj.Pointer;
             this.OnHost = obj.OnHost;
+
+            if (executionTime.HasValue)
+            {
+                this.LastProcessingTimeSpan = executionTime.Value;
+                this.LastProcessingTime = this.LastProcessingTimeSpan.ToString("hh':'mm':'ss'.'fff");
+            }
+
+            if (loadingTime.HasValue)
+            {
+                this.LastLoadingTimeSpan = loadingTime.Value;
+                this.LastLoadingTime = this.LastLoadingTimeSpan.ToString("hh':'mm':'ss'.'fff");
+            }
 
             this.Entry = $"'{this.Name}' ({this.Width}x{this.Height}, {(this.SizeInBytes / 1024)} kB) <{(this.Pointer != 0 ? this.Pointer : "")}>";
         }

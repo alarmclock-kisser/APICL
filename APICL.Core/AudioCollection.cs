@@ -29,7 +29,7 @@ namespace APICL.Core
 				if (this._currentTrack != value)
 				{
 					this._currentTrack = value;
-					CurrentTrackChanged?.Invoke(this, this._currentTrack);
+                    this.CurrentTrackChanged?.Invoke(this, this._currentTrack);
 				}
 			}
 		}
@@ -53,8 +53,8 @@ namespace APICL.Core
 				this.CurrentTrack = track;
 			}
 
-			TracksChanged?.Invoke(this, this.Tracks);
-			LogMessage?.Invoke(this, $"Added track: {track.Name}");
+            this.TracksChanged?.Invoke(this, this.Tracks);
+            this.LogMessage?.Invoke(this, $"Added track: {track.Name}");
 
 			return track;
 		}
@@ -72,8 +72,8 @@ namespace APICL.Core
 				this.CurrentTrack = obj;
 			}
 
-			TracksChanged?.Invoke(this, this.Tracks);
-			LogMessage?.Invoke(this, $"Created empty track: {obj.Name}");
+            this.TracksChanged?.Invoke(this, this.Tracks);
+            this.LogMessage?.Invoke(this, $"Created empty track: {obj.Name}");
 			return obj;
 		}
 
@@ -101,8 +101,8 @@ namespace APICL.Core
 				this.CurrentTrack = obj;
 			}
 
-			TracksChanged?.Invoke(this, this.Tracks);
-			LogMessage?.Invoke(this, $"Created waveform: {obj.Filepath}");
+            this.TracksChanged?.Invoke(this, this.Tracks);
+            this.LogMessage?.Invoke(this, $"Created waveform: {obj.Filepath}");
 			Debug.WriteLine($"Sample range: {data.Min()} to {data.Max()}");
 
 			return obj;
@@ -144,7 +144,7 @@ namespace APICL.Core
 
 			if (audioFiles.Length == 0)
 			{
-				LogMessage?.Invoke(this, "No audio files found in Resources directory.");
+                this.LogMessage?.Invoke(this, "No audio files found in Resources directory.");
 				return;
 			}
 
@@ -153,7 +153,7 @@ namespace APICL.Core
 				{
 					if (t.IsFaulted)
 					{
-						LogMessage?.Invoke(this, $"Error loading audio file '{file}': {t.Exception?.InnerException?.Message}");
+                        this.LogMessage?.Invoke(this, $"Error loading audio file '{file}': {t.Exception?.InnerException?.Message}");
 					}
 				})
 			);
@@ -183,8 +183,8 @@ namespace APICL.Core
 			}
 
 			toRemove?.Dispose();
-			TracksChanged?.Invoke(this, this.Tracks);
-			LogMessage?.Invoke(this, $"Removed track at index {index}");
+            this.TracksChanged?.Invoke(this, this.Tracks);
+            this.LogMessage?.Invoke(this, $"Removed track at index {index}");
 		}
 
 		public async Task TogglePlayback(float volume = 1.0f)
@@ -207,17 +207,17 @@ namespace APICL.Core
 
 			await this.CurrentTrack!.Play(this._playbackCancellationTokenSource.Token, () =>
 			{
-				PlaybackStateChanged?.Invoke(this, PlaybackState.Stopped);
-				PlaybackPositionChanged?.Invoke(this, 0);
+                this.PlaybackStateChanged?.Invoke(this, PlaybackState.Stopped);
+                this.PlaybackPositionChanged?.Invoke(this, 0);
 			}, volume).ConfigureAwait(false);
 
-			PlaybackStateChanged?.Invoke(this, PlaybackState.Playing);
+            this.PlaybackStateChanged?.Invoke(this, PlaybackState.Playing);
 
 			_ = Task.Run(async () =>
 			{
 				while (this.CurrentTrack.Playing && !this._playbackCancellationTokenSource.IsCancellationRequested)
 				{
-					PlaybackPositionChanged?.Invoke(this, this.CurrentTrack.CurrentTime);
+                    this.PlaybackPositionChanged?.Invoke(this, this.CurrentTrack.CurrentTime);
 					await Task.Delay(30, this._playbackCancellationTokenSource.Token).ConfigureAwait(false);
 				}
 			}, this._playbackCancellationTokenSource.Token);
@@ -227,7 +227,7 @@ namespace APICL.Core
 		{
 			this._playbackCancellationTokenSource.Cancel();
 			this.CurrentTrack?.Stop();
-			PlaybackStateChanged?.Invoke(this, PlaybackState.Stopped);
+            this.PlaybackStateChanged?.Invoke(this, PlaybackState.Stopped);
 			await Task.Yield();
 		}
 
@@ -254,7 +254,7 @@ namespace APICL.Core
 			}
 			catch (Exception ex)
 			{
-				LogMessage?.Invoke(this, $"Error stopping all tracks: {ex.Message}");
+                this.LogMessage?.Invoke(this, $"Error stopping all tracks: {ex.Message}");
 				stopped = -1;
 			}
 

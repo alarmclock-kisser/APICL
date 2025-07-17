@@ -1,0 +1,42 @@
+[
+  {
+    "Name": "swagger",
+    "Projects": [
+      {
+        "Path": "APICL.Api\\APICL.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "IIS Express"
+      }
+    ]
+  },
+  {
+    "Name": "full start",
+    "Projects": [
+      {
+        "Path": "APICL.Api\\APICL.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "IIS Express"
+      },
+      {
+        "Path": "APICL.WebApp\\APICL.WebApp.csproj",
+        "Action": "Start",
+        "DebugTarget": "IIS Express"
+      }
+    ]
+  },
+  {
+    "Name": "full https",
+    "Projects": [
+      {
+        "Path": "APICL.Api\\APICL.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "APICL.WebApp\\APICL.WebApp.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  }
+]

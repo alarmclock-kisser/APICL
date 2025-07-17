@@ -72,7 +72,8 @@ namespace APICL.OpenCl
 			{
 				Console.WriteLine("Disposed OpenCL context and resources.");
 			}
-			OnChange?.Invoke();
+
+            this.OnChange?.Invoke();
 		}
 
 
@@ -768,7 +769,7 @@ namespace APICL.OpenCl
 					Console.WriteLine("Invalid index for OpenCL device selection");
 				}
 
-				OnChange?.Invoke();
+                this.OnChange?.Invoke();
 				return;
 			}
 
@@ -783,7 +784,7 @@ namespace APICL.OpenCl
 					Console.WriteLine($"Failed to create OpenCL context: {this.lastError}");
 				}
 
-				OnChange?.Invoke();
+                this.OnChange?.Invoke();
 				return;
 			}
 			// Assuming CLCommandQueue is created within OpenClMemoryRegister constructor
@@ -798,7 +799,7 @@ namespace APICL.OpenCl
 				Console.WriteLine($"Initialized OpenCL context for device {this.GetDeviceInfo(this.DEV, DeviceInfo.Name) ?? "N/A"} on platform {this.GetPlatformInfo(this.PLAT, PlatformInfo.Name) ?? "N/A"}");
 			}
 
-			OnChange?.Invoke();
+            this.OnChange?.Invoke();
 		}
 
 

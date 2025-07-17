@@ -1,4 +1,5 @@
-﻿using APICL.Core;
+﻿using System.Diagnostics;
+using APICL.Core;
 using APICL.Shared;
 using Microsoft.AspNetCore.Mvc;
 using TextCopy;
@@ -143,7 +144,8 @@ namespace APICL.Api.Controllers
 		}
 
 		[HttpPost("images/upload")]
-		[ProducesResponseType(typeof(ImageObjInfo), 201)]
+        [RequestSizeLimit(256_000_000)]
+        [ProducesResponseType(typeof(ImageObjInfo), 201)]
 		[ProducesResponseType(204)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(400)]
@@ -154,6 +156,8 @@ namespace APICL.Api.Controllers
 			{
 				return this.NoContent();
 			}
+
+			Stopwatch sw = Stopwatch.StartNew();
 
 			// Temp dir for storing uploaded files
 			var tempDir = Path.Combine(Path.GetTempPath(), "image_uploads");
@@ -186,7 +190,7 @@ namespace APICL.Api.Controllers
 					return this.BadRequest("Failed to load image from uploaded file.");
 				}
 
-				var info = this.imageCollection.Images.Contains(imgObj) ? await Task.Run(() => new ImageObjInfo(imgObj)) : null;
+				var info = this.imageCollection.Images.Contains(imgObj) ? await Task.Run(() => new ImageObjInfo(imgObj, sw.Elapsed)) : null;
 
 				if (info == null || info.Guid == Guid.Empty)
 				{
@@ -216,6 +220,7 @@ namespace APICL.Api.Controllers
 				}
 				finally
 				{
+					sw.Stop();
 					await Task.Yield();
 				}
 			}

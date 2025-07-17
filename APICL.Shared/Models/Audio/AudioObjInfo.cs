@@ -18,19 +18,21 @@ namespace APICL.Shared
         public int OverlapSize { get; set; } = 0;
         public string Form { get; set; } = "f";
         public double StretchFactor { get; set; } = 1.0;
-
         public float Bpm { get; set; } = 0.0f;
-
         public bool Playing { get; set; } = false;
 
         public long SizeInBytes { get; set; } = 0;
-        public int LastProcessingTime { get; set; } = 0;
-
 		public double Duration { get; set; } = 0.0;
+
+        public TimeSpan LastProcessingTimeSpan = TimeSpan.Zero;
+        public string LastProcessingTime { get; set; } = string.Empty;
+
+        public TimeSpan LastLoadingTimeSpan = TimeSpan.Zero;
+        public string LastLoadingTime { get; set; } = string.Empty;
 
         public string Entry { get; set; } = string.Empty;
 
-		public AudioObjInfo(AudioObj? obj)
+		public AudioObjInfo(AudioObj? obj, TimeSpan? loadingTime = null, TimeSpan? executionTime = null)
         {
             if (obj == null)
             {
@@ -53,6 +55,17 @@ namespace APICL.Shared
             this.Bpm = obj.Bpm;
             this.Playing = obj.Playing;
 
+            if (executionTime.HasValue)
+            {
+                this.LastProcessingTimeSpan = executionTime.Value;
+                this.LastProcessingTime = this.LastProcessingTimeSpan.ToString("hh':'mm':'ss'.'fff");
+            }
+
+            if (loadingTime.HasValue)
+            {
+                this.LastLoadingTimeSpan = loadingTime.Value;
+                this.LastLoadingTime = this.LastLoadingTimeSpan.ToString("hh':'mm':'ss'.'fff");
+            }
 
             this.SizeInBytes = this.Length * (this.Bitdepth / 8) * this.Channels;
             this.Duration = (this.Samplerate > 0 && this.Channels > 0) ? (double)this.Length / (this.Samplerate * this.Channels) : 0;

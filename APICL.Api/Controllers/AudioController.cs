@@ -1,4 +1,5 @@
-﻿using APICL.Core;
+﻿using System.Diagnostics;
+using APICL.Core;
 using APICL.Shared;
 using Microsoft.AspNetCore.Mvc;
 using TextCopy;
@@ -105,7 +106,8 @@ namespace APICL.Api.Controllers
 		}
 
 		[HttpPost("audios/upload")]
-		[ProducesResponseType(typeof(AudioObjInfo), 201)]
+        [RequestSizeLimit(512_000_000)]
+        [ProducesResponseType(typeof(AudioObjInfo), 201)]
 		[ProducesResponseType(204)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(400)]
@@ -116,6 +118,8 @@ namespace APICL.Api.Controllers
 			{
 				return this.NoContent();
 			}
+
+			Stopwatch sw = Stopwatch.StartNew();
 
 			// Temp dir for storing uploaded files
 			var tempDir = Path.Combine(Path.GetTempPath(), "audio_uploads");
@@ -147,7 +151,7 @@ namespace APICL.Api.Controllers
 					return this.BadRequest("Failed to load audio from uploaded file.");
 				}
 
-				var info = this.audioCollection.Tracks.Contains(obj) ? await Task.Run(() => new AudioObjInfo(obj)) : null;
+				var info = this.audioCollection.Tracks.Contains(obj) ? await Task.Run(() => new AudioObjInfo(obj, sw.Elapsed)) : null;
 
 				if (info == null || info.Guid == Guid.Empty)
 				{
@@ -177,7 +181,8 @@ namespace APICL.Api.Controllers
 				}
 				finally
 				{
-					await Task.Yield();
+                    sw.Stop();
+                    await Task.Yield();
 				}
 			}
 		}
