@@ -1,4 +1,7 @@
 
+using APICL.Core;
+using APICL.OpenCl;
+
 namespace APICL.Api
 {
     public class Program
@@ -8,9 +11,11 @@ namespace APICL.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddSingleton<ImageCollection>();
+			builder.Services.AddSingleton<AudioCollection>();
+			builder.Services.AddSingleton<OpenClService>();
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+			builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -27,6 +32,7 @@ namespace APICL.Api
 
             app.UseAuthorization();
 
+            app.UseStaticFiles();
 
             app.MapControllers();
 

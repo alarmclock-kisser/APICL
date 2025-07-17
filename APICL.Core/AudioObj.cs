@@ -1,4 +1,4 @@
-﻿using APICL.Shared;
+﻿using APICL.Core.CommonStaticMethods;
 using NAudio.Wave;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -14,7 +14,7 @@ namespace APICL.Core
 	public class AudioObj : IDisposable
 	{
 		// ----- ----- ----- ATTRIBUTES ----- ----- ----- \\
-		public Guid Id { get; } = Guid.Empty;
+		public Guid Guid { get; } = Guid.Empty;
 		public string Filepath { get; set; }
 		public string Name { get; set; }
 		public float[] Data { get; set; } = [];
@@ -101,7 +101,7 @@ namespace APICL.Core
 		// ----- ----- ----- CONSTRUCTOR ----- ----- ----- \\
 		public AudioObj(string filepath)
 		{
-			this.Id = Guid.NewGuid();
+			this.Guid = Guid.NewGuid();
 			this.Filepath = filepath;
 			this.Name = Path.GetFileNameWithoutExtension(filepath);
 			this.LoadAudioFile().Wait();
@@ -109,7 +109,7 @@ namespace APICL.Core
 
 		public AudioObj(IEnumerable<float> data, int samplerate = 44100, int channels = 1, int bitdepth = 16, string name = "Empty_")
 		{
-			this.Id = Guid.NewGuid();
+			this.Guid = Guid.NewGuid();
 			this.Data = data.ToArray();
 			this.Name = name;
 			this.Filepath = "N/A";

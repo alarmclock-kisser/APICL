@@ -7,7 +7,7 @@ namespace APICL.Core
 {
 	public class ImageObj : IDisposable
 	{
-		public Guid Id { get; private set; }
+		public Guid Guid { get; private set; }
 
 		public string Filepath { get; set; } = string.Empty;
 		public string Name { get; set; } = string.Empty;
@@ -31,7 +31,7 @@ namespace APICL.Core
 
 		public ImageObj(string filePath)
 		{
-			this.Id = Guid.NewGuid();
+			this.Guid = Guid.NewGuid();
 			this.Filepath = filePath;
 			this.Name = Path.GetFileNameWithoutExtension(filePath);
 
@@ -65,7 +65,7 @@ namespace APICL.Core
 
 		public ImageObj(IEnumerable<byte> rawPixelData, int width, int height, string name = "UnbenanntesBild")
 		{
-			this.Id = Guid.NewGuid();
+			this.Guid = Guid.NewGuid();
 			this.Name = name;
 			this.Filepath = string.Empty;
 

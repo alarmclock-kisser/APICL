@@ -7,10 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Audio\" />
-    <Folder Include="Models\Image\" />
-    <Folder Include="Models\OpenCl\" />
-    <Folder Include="Data\" />
+    <ProjectReference Include="..\APICL.Core\APICL.Core.csproj" />
+    <ProjectReference Include="..\APICL.OpenCl\APICL.OpenCl.csproj" />
   </ItemGroup>
 
 </Project>

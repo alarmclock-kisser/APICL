@@ -43,7 +43,7 @@ namespace APICL.Core
 
         public bool Add(ImageObj imgObj)
         {
-            return this.images.TryAdd(imgObj.Id, imgObj);
+            return this.images.TryAdd(imgObj.Guid, imgObj);
         }
 
         public bool Remove(Guid guid)
@@ -52,7 +52,7 @@ namespace APICL.Core
             if (result && imgObj != null)
             {
                 imgObj.Dispose();
-                Console.WriteLine($"Removed and disposed image '{imgObj.Name}' (ID: {imgObj.Id}).");
+                Console.WriteLine($"Removed and disposed image '{imgObj.Name}' (ID: {imgObj.Guid}).");
             }
             else
             {
@@ -71,7 +71,7 @@ namespace APICL.Core
                     foreach (var imgObj in this.images.Values)
                     {
                         imgObj.Dispose();
-                        Console.WriteLine($"Disposed image '{imgObj.Name}' (Guid: {imgObj.Id}).");
+                        Console.WriteLine($"Disposed image '{imgObj.Name}' (Guid: {imgObj.Guid}).");
                     }
 
                     this.images.Clear();
@@ -113,12 +113,12 @@ namespace APICL.Core
 
 			if (this.Add(obj))
             {
-                Console.WriteLine($"Loaded and added image '{obj.Name}' (ID: {obj.Id}) from file.");
+                Console.WriteLine($"Loaded and added image '{obj.Name}' (ID: {obj.Guid}) from file.");
                 return obj;
             }
 
 			obj.Dispose();
-			Console.WriteLine($"Failed to add image '{obj.Name}' (ID: {obj.Id}). An image with this ID might already exist.");
+			Console.WriteLine($"Failed to add image '{obj.Name}' (ID: {obj.Guid}). An image with this ID might already exist.");
 			return null;
 		}
 
@@ -150,16 +150,16 @@ namespace APICL.Core
             {
 				if (this.Add(imgObj))
 				{
-					Console.WriteLine($"Created and added empty image '{imgObj.Name}' (ID: {imgObj.Id}) with size {size.Value.Width}x{size.Value.Height}.");
+					Console.WriteLine($"Created and added empty image '{imgObj.Name}' (ID: {imgObj.Guid}) with size {size.Value.Width}x{size.Value.Height}.");
 					return imgObj;
 				}
 
 				imgObj.Dispose();
-				Console.WriteLine($"Failed to add empty image '{imgObj.Name}' (ID: {imgObj.Id}). An image with this ID might already exist.");
+				Console.WriteLine($"Failed to add empty image '{imgObj.Name}' (ID: {imgObj.Guid}). An image with this ID might already exist.");
 				return null;
 			}
 
-            Console.WriteLine($"Created empty image '{imgObj.Name}' (ID: {imgObj.Id}) with size {size.Value.Width}x{size.Value.Height}, but not added to collection.");
+            Console.WriteLine($"Created empty image '{imgObj.Name}' (ID: {imgObj.Guid}) with size {size.Value.Width}x{size.Value.Height}, but not added to collection.");
             return imgObj;
 		}
 

@@ -7,15 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AsyncEnumerator" Version="4.0.2" />
     <PackageReference Include="BunLabs.NAudio.Flac" Version="2.0.1" />
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+    <PackageReference Include="System.Linq.Parallel" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Tasks.Parallel" Version="4.3.0" />
     <PackageReference Include="TagLibSharp" Version="2.3.0" />
-    <PackageReference Include="TaskParallelLibrary" Version="1.0.2856" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\APICL.Shared\APICL.Shared.csproj" />
   </ItemGroup>
 
 </Project>

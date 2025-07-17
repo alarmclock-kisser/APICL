@@ -9,6 +9,13 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+    <PackageReference Include="TextCopy" Version="6.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\APICL.Core\APICL.Core.csproj" />
+    <ProjectReference Include="..\APICL.OpenCl\APICL.OpenCl.csproj" />
+    <ProjectReference Include="..\APICL.Shared\APICL.Shared.csproj" />
   </ItemGroup>
 
 </Project>

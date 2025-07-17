@@ -34,10 +34,10 @@ namespace APICL.Core
 			}
 		}
 
-		public AudioObj? this[Guid guid] => this._tracks.FirstOrDefault(t => t.Id == guid);
+		public AudioObj? this[Guid guid] => this._tracks.FirstOrDefault(t => t.Guid == guid);
 
 		// --- Public Methods ---
-		public async Task<AudioObj> AddTrackAsync(string filePath)
+		public async Task<AudioObj> AddTrack(string filePath)
 		{
 			if (!File.Exists(filePath))
 			{
@@ -77,7 +77,7 @@ namespace APICL.Core
 			return obj;
 		}
 
-		public async Task<AudioObj> CreateWaveformAsync(string wave = "sin", int lengthSec = 1,
+		public async Task<AudioObj> CreateWaveform(string wave = "sin", int lengthSec = 1,
 			int samplerate = 44100, int channels = 1, int bitdepth = 16)
 		{
 			if (lengthSec <= 0 || samplerate <= 0 || channels <= 0 || bitdepth <= 0)
@@ -133,7 +133,7 @@ namespace APICL.Core
 			});
 		}
 
-		public async Task LoadResourcesAudiosAsync()
+		public async Task LoadResourcesAudios()
 		{
 			string[] audioFiles = await Task.Run(() =>
 				Directory.GetFiles(Path.Combine(this.Repopath, "Resources"), "*.*", SearchOption.AllDirectories)
@@ -149,7 +149,7 @@ namespace APICL.Core
 			}
 
 			var loadTasks = audioFiles.Select(file =>
-				this.AddTrackAsync(file).ContinueWith(t =>
+				this.AddTrack(file).ContinueWith(t =>
 				{
 					if (t.IsFaulted)
 					{
@@ -187,21 +187,21 @@ namespace APICL.Core
 			LogMessage?.Invoke(this, $"Removed track at index {index}");
 		}
 
-		public async Task TogglePlaybackAsync(float volume = 1.0f)
+		public async Task TogglePlayback(float volume = 1.0f)
 		{
 			if (this.CurrentTrack == null || this.CurrentTrack.Data.Length == 0) return;
 
 			if (this.CurrentTrack.Playing)
 			{
-				await this.StopPlaybackAsync().ConfigureAwait(false);
+				await this.StopPlayback().ConfigureAwait(false);
 			}
 			else
 			{
-				await this.StartPlaybackAsync(volume).ConfigureAwait(false);
+				await this.StartPlayback(volume).ConfigureAwait(false);
 			}
 		}
 
-		private async Task StartPlaybackAsync(float volume)
+		private async Task StartPlayback(float volume)
 		{
 			this._playbackCancellationTokenSource = new CancellationTokenSource();
 
@@ -223,7 +223,7 @@ namespace APICL.Core
 			}, this._playbackCancellationTokenSource.Token);
 		}
 
-		private async Task StopPlaybackAsync()
+		private async Task StopPlayback()
 		{
 			this._playbackCancellationTokenSource.Cancel();
 			this.CurrentTrack?.Stop();
@@ -231,7 +231,7 @@ namespace APICL.Core
 			await Task.Yield();
 		}
 
-		public async Task<int> StopAllAsync()
+		public async Task<int> StopAll()
 		{
 			int stopped = 0;
 
