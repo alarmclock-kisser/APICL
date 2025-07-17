@@ -2,7 +2,6 @@
 using APICL.Core;
 using APICL.OpenCl;
 using APICL.Shared;
-using APICL.Shared;
 using Microsoft.AspNetCore.Mvc;
 using TextCopy;
 
