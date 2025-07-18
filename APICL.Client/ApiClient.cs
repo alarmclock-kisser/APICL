@@ -110,9 +110,9 @@ namespace APICL.Client
             }
         }
 
-        public async Task<ICollection<OpenClKernelInfo>> GetOpenClKernelInfos()
+        public async Task<ICollection<OpenClKernelInfo>> GetOpenClKernelInfos(string filter = "")
         {
-            var task = this.internalClient.KernelsAsync();
+            var task = this.internalClient.KernelsAsync(filter);
 
             try
             {

@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.4",
+  "swagger": "2.0",
   "info": {
     "title": "APICL.Api",
     "version": "1.0"
@@ -10,33 +10,18 @@
         "tags": [
           "Audio"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AudioObjInfo"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AudioObjInfo"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AudioObjInfo"
-                  }
-                }
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AudioObjInfo"
               }
             }
           },
@@ -54,36 +39,25 @@
         "tags": [
           "Audio"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "guid",
             "in": "path",
+            "name": "guid",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "type": "string",
+            "format": "uuid"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioObjInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioObjInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioObjInfo"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/AudioObjInfo"
             }
           },
           "204": {
@@ -100,76 +74,37 @@
         "tags": [
           "Audio"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "guid",
             "in": "path",
+            "name": "guid",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "type": "string",
+            "format": "uuid"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
+            "schema": {
+              "type": "boolean"
             }
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "400": {
             "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -183,55 +118,32 @@
         "tags": [
           "Audio"
         ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "copyGuid",
             "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": true
-            }
+            "name": "copyGuid",
+            "type": "boolean",
+            "default": true
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "type": "file"
           }
         ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              },
-              "encoding": {
-                "file": {
-                  "style": "form"
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": "Created",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioObjInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioObjInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioObjInfo"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/AudioObjInfo"
             }
           },
           "204": {
@@ -239,42 +151,14 @@
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "400": {
             "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -288,15 +172,18 @@
         "tags": [
           "Audio"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "guid",
             "in": "path",
+            "name": "guid",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "type": "string",
+            "format": "uuid"
           }
         ],
         "responses": {
@@ -308,42 +195,14 @@
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "400": {
             "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -357,36 +216,25 @@
         "tags": [
           "Audio"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "guid",
             "in": "path",
+            "name": "guid",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "type": "string",
+            "format": "uuid"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioData"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioData"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioData"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/AudioData"
             }
           },
           "204": {
@@ -394,22 +242,8 @@
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -423,25 +257,26 @@
         "tags": [
           "Audio"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "guid",
             "in": "path",
+            "name": "guid",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "type": "string",
+            "format": "uuid"
           },
           {
-            "name": "volume",
             "in": "path",
+            "name": "volume",
             "required": true,
-            "schema": {
-              "type": "number",
-              "format": "float",
-              "default": 0.66
-            }
+            "type": "number",
+            "format": "float",
+            "default": 0.66
           }
         ],
         "responses": {
@@ -453,22 +288,8 @@
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -482,76 +303,37 @@
         "tags": [
           "Audio"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "guid",
             "in": "path",
+            "name": "guid",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "type": "string",
+            "format": "uuid"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioObjInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioObjInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioObjInfo"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/AudioObjInfo"
             }
           },
           "400": {
             "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -565,28 +347,17 @@
         "tags": [
           "Audio"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              }
+            "schema": {
+              "format": "int32",
+              "type": "integer"
             }
           },
           "204": {
@@ -594,22 +365,8 @@
           },
           "400": {
             "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -623,33 +380,18 @@
         "tags": [
           "Image"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImageObjInfo"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImageObjInfo"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ImageObjInfo"
-                  }
-                }
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ImageObjInfo"
               }
             }
           },
@@ -667,36 +409,25 @@
         "tags": [
           "Image"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "guid",
             "in": "path",
+            "name": "guid",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "type": "string",
+            "format": "uuid"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageObjInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageObjInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageObjInfo"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ImageObjInfo"
             }
           },
           "204": {
@@ -713,76 +444,37 @@
         "tags": [
           "Image"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "guid",
             "in": "path",
+            "name": "guid",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "type": "string",
+            "format": "uuid"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
+            "schema": {
+              "type": "boolean"
             }
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "400": {
             "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -796,87 +488,46 @@
         "tags": [
           "Image"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "width",
             "in": "path",
+            "name": "width",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1920
-            }
+            "type": "integer",
+            "format": "int32",
+            "default": 1920
           },
           {
-            "name": "height",
             "in": "path",
+            "name": "height",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1080
-            }
+            "type": "integer",
+            "format": "int32",
+            "default": 1080
           }
         ],
         "responses": {
           "201": {
             "description": "Created",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageObjInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageObjInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageObjInfo"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ImageObjInfo"
             }
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "400": {
             "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -890,55 +541,32 @@
         "tags": [
           "Image"
         ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "copyGuid",
             "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": true
-            }
+            "name": "copyGuid",
+            "type": "boolean",
+            "default": true
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "type": "file"
           }
         ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              },
-              "encoding": {
-                "file": {
-                  "style": "form"
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": "Created",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageObjInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageObjInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageObjInfo"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ImageObjInfo"
             }
           },
           "204": {
@@ -946,42 +574,14 @@
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "400": {
             "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -995,15 +595,18 @@
         "tags": [
           "Image"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "guid",
             "in": "path",
+            "name": "guid",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "type": "string",
+            "format": "uuid"
           }
         ],
         "responses": {
@@ -1015,42 +618,14 @@
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "400": {
             "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -1064,36 +639,25 @@
         "tags": [
           "Image"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "guid",
             "in": "path",
+            "name": "guid",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "type": "string",
+            "format": "uuid"
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageData"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageData"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageData"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ImageData"
             }
           },
           "204": {
@@ -1101,22 +665,8 @@
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -1130,25 +680,16 @@
         "tags": [
           "OpenCl"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenClServiceInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenClServiceInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenClServiceInfo"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/OpenClServiceInfo"
             }
           },
           "500": {
@@ -1162,33 +703,18 @@
         "tags": [
           "OpenCl"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OpenClDeviceInfo"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OpenClDeviceInfo"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OpenClDeviceInfo"
-                  }
-                }
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OpenClDeviceInfo"
               }
             }
           },
@@ -1206,77 +732,38 @@
         "tags": [
           "OpenCl"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
-            "name": "deviceId",
             "in": "path",
+            "name": "deviceId",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 2
-            }
+            "type": "integer",
+            "format": "int32",
+            "default": 2
           }
         ],
         "responses": {
           "201": {
             "description": "Created",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenClServiceInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenClServiceInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenClServiceInfo"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/OpenClServiceInfo"
             }
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "400": {
             "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -1290,45 +777,22 @@
         "tags": [
           "OpenCl"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenClServiceInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenClServiceInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenClServiceInfo"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/OpenClServiceInfo"
             }
           },
           "400": {
             "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -1342,45 +806,22 @@
         "tags": [
           "OpenCl"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenClUsageInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenClUsageInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OpenClUsageInfo"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/OpenClUsageInfo"
             }
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -1394,33 +835,18 @@
         "tags": [
           "OpenCl"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OpenClMemoryInfo"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OpenClMemoryInfo"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OpenClMemoryInfo"
-                  }
-                }
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OpenClMemoryInfo"
               }
             }
           },
@@ -1429,22 +855,8 @@
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -1453,38 +865,32 @@
         }
       }
     },
-    "/api/OpenCl/kernels": {
+    "/api/OpenCl/kernels/{filter}": {
       "get": {
         "tags": [
           "OpenCl"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "filter",
+            "required": true,
+            "type": "string",
+            "default": ""
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OpenClKernelInfo"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OpenClKernelInfo"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OpenClKernelInfo"
-                  }
-                }
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OpenClKernelInfo"
               }
             }
           },
@@ -1493,22 +899,8 @@
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -1522,193 +914,130 @@
         "tags": [
           "OpenCl"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
+            "in": "path",
             "name": "kernel",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "mandelbrotPrecise"
-            }
+            "type": "string",
+            "default": "mandelbrotPrecise"
           },
           {
+            "in": "path",
             "name": "version",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "01"
-            }
+            "type": "string",
+            "default": "01"
           },
           {
+            "in": "path",
             "name": "width",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1920
-            }
+            "type": "integer",
+            "format": "int32",
+            "default": 1920
           },
           {
+            "in": "path",
             "name": "height",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1080
-            }
+            "type": "integer",
+            "format": "int32",
+            "default": 1080
           },
           {
+            "in": "path",
             "name": "zoom",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "number",
-              "format": "double",
-              "default": 1
-            }
+            "type": "number",
+            "format": "double",
+            "default": 1
           },
           {
+            "in": "path",
             "name": "x",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "number",
-              "format": "double",
-              "default": 0
-            }
+            "type": "number",
+            "format": "double",
+            "default": 0
           },
           {
+            "in": "path",
             "name": "y",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "number",
-              "format": "double",
-              "default": 0
-            }
+            "type": "number",
+            "format": "double",
+            "default": 0
           },
           {
+            "in": "path",
             "name": "coeff",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 8
-            }
+            "type": "integer",
+            "format": "int32",
+            "default": 8
           },
           {
+            "in": "path",
             "name": "r",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "type": "integer",
+            "format": "int32",
+            "default": 0
           },
           {
+            "in": "path",
             "name": "g",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "type": "integer",
+            "format": "int32",
+            "default": 0
           },
           {
+            "in": "path",
             "name": "b",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
+            "type": "integer",
+            "format": "int32",
+            "default": 0
           },
           {
+            "in": "path",
             "name": "copyGuid",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "boolean",
-              "default": true
-            }
+            "type": "boolean",
+            "default": true
           },
           {
-            "name": "allowTempSession",
             "in": "path",
+            "name": "allowTempSession",
             "required": true,
-            "schema": {
-              "type": "boolean",
-              "default": true
-            }
+            "type": "boolean",
+            "default": true
           }
         ],
         "responses": {
           "201": {
             "description": "Created",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageObjInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageObjInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImageObjInfo"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ImageObjInfo"
             }
           },
           "404": {
             "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "400": {
             "description": "Bad Request",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           },
           "500": {
@@ -1722,510 +1051,446 @@
         "tags": [
           "OpenCl"
         ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "parameters": [
           {
+            "in": "path",
             "name": "guid",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "type": "string",
+            "format": "uuid"
           },
           {
+            "in": "path",
             "name": "kernel",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "timestretch_double"
-            }
+            "type": "string",
+            "default": "timestretch_double"
           },
           {
+            "in": "path",
             "name": "version",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "default": "03"
-            }
+            "type": "string",
+            "default": "03"
           },
           {
+            "in": "path",
             "name": "factor",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "number",
-              "format": "double",
-              "default": 0.8
-            }
+            "type": "number",
+            "format": "double",
+            "default": 0.8
           },
           {
+            "in": "path",
             "name": "chunkSize",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 16384
-            }
+            "type": "integer",
+            "format": "int32",
+            "default": 16384
           },
           {
+            "in": "path",
             "name": "overlap",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "number",
-              "format": "float",
-              "default": 0.5
-            }
+            "type": "number",
+            "format": "float",
+            "default": 0.5
           },
           {
+            "in": "path",
             "name": "copyGuid",
-            "in": "path",
             "required": true,
-            "schema": {
-              "type": "boolean",
-              "default": true
-            }
+            "type": "boolean",
+            "default": true
           },
           {
-            "name": "allowTempSession",
             "in": "path",
+            "name": "allowTempSession",
             "required": true,
-            "schema": {
-              "type": "boolean",
-              "default": true
-            }
+            "type": "boolean",
+            "default": true
           }
         ],
         "responses": {
           "200": {
             "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioObjInfo"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioObjInfo"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AudioObjInfo"
-                }
-              }
+            "schema": {
+              "$ref": "#/definitions/AudioObjInfo"
             }
           }
         }
       }
     }
   },
-  "components": {
-    "schemas": {
-      "AudioData": {
-        "type": "object",
-        "properties": {
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "filepath": {
-            "type": "string",
-            "nullable": true
-          },
-          "length": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "pointer": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "waveformBase64": {
-            "type": "string",
-            "nullable": true
-          },
-          "waveformWidth": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "waveformHeight": {
-            "type": "integer",
-            "format": "int32"
-          }
+  "definitions": {
+    "AudioData": {
+      "type": "object",
+      "properties": {
+        "guid": {
+          "format": "uuid",
+          "type": "string"
         },
-        "additionalProperties": false
+        "filepath": {
+          "type": "string"
+        },
+        "length": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "pointer": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "waveformBase64": {
+          "type": "string"
+        },
+        "waveformWidth": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "waveformHeight": {
+          "format": "int32",
+          "type": "integer"
+        }
       },
-      "AudioObjInfo": {
-        "type": "object",
-        "properties": {
-          "guid": {
-            "type": "string",
-            "format": "uuid",
-            "readOnly": true
-          },
-          "filepath": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "samplerate": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "bitdepth": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "channels": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "length": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "pointer": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "onHost": {
-            "type": "boolean"
-          },
-          "chunkSize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "overlapSize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "form": {
-            "type": "string",
-            "nullable": true
-          },
-          "stretchFactor": {
-            "type": "number",
-            "format": "double"
-          },
-          "bpm": {
-            "type": "number",
-            "format": "float"
-          },
-          "playing": {
-            "type": "boolean"
-          },
-          "sizeInBytes": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "duration": {
-            "type": "number",
-            "format": "double"
-          },
-          "lastProcessingTime": {
-            "type": "string",
-            "nullable": true
-          },
-          "lastLoadingTime": {
-            "type": "string",
-            "nullable": true
-          },
-          "entry": {
-            "type": "string",
-            "nullable": true
-          }
+      "additionalProperties": false
+    },
+    "AudioObjInfo": {
+      "type": "object",
+      "properties": {
+        "guid": {
+          "format": "uuid",
+          "type": "string",
+          "readOnly": true
         },
-        "additionalProperties": false
+        "filepath": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "samplerate": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "bitdepth": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "channels": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "length": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "pointer": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "onHost": {
+          "type": "boolean"
+        },
+        "chunkSize": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "overlapSize": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "form": {
+          "type": "string"
+        },
+        "stretchFactor": {
+          "format": "double",
+          "type": "number"
+        },
+        "bpm": {
+          "format": "float",
+          "type": "number"
+        },
+        "playing": {
+          "type": "boolean"
+        },
+        "sizeInBytes": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "duration": {
+          "format": "double",
+          "type": "number"
+        },
+        "lastProcessingTime": {
+          "type": "string"
+        },
+        "lastLoadingTime": {
+          "type": "string"
+        },
+        "entry": {
+          "type": "string"
+        }
       },
-      "ImageData": {
-        "type": "object",
-        "properties": {
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "base64": {
-            "type": "string",
-            "nullable": true
-          },
-          "width": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "height": {
-            "type": "integer",
-            "format": "int32"
-          }
+      "additionalProperties": false
+    },
+    "ImageData": {
+      "type": "object",
+      "properties": {
+        "guid": {
+          "format": "uuid",
+          "type": "string"
         },
-        "additionalProperties": false
+        "base64": {
+          "type": "string"
+        },
+        "width": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "height": {
+          "format": "int32",
+          "type": "integer"
+        }
       },
-      "ImageObjInfo": {
-        "type": "object",
-        "properties": {
-          "guid": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "filePath": {
-            "type": "string",
-            "nullable": true
-          },
-          "height": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "width": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "bitdepth": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "channels": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "sizeInBytes": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "pointer": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "onHost": {
-            "type": "boolean"
-          },
-          "entry": {
-            "type": "string",
-            "nullable": true
-          },
-          "lastProcessingTime": {
-            "type": "string",
-            "nullable": true
-          },
-          "lastLoadingTime": {
-            "type": "string",
-            "nullable": true
-          }
+      "additionalProperties": false
+    },
+    "ImageObjInfo": {
+      "type": "object",
+      "properties": {
+        "guid": {
+          "format": "uuid",
+          "type": "string"
         },
-        "additionalProperties": false
+        "name": {
+          "type": "string"
+        },
+        "filePath": {
+          "type": "string"
+        },
+        "height": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "width": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "bitdepth": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "channels": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "sizeInBytes": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "pointer": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "onHost": {
+          "type": "boolean"
+        },
+        "entry": {
+          "type": "string"
+        },
+        "lastProcessingTime": {
+          "type": "string"
+        },
+        "lastLoadingTime": {
+          "type": "string"
+        }
       },
-      "OpenClDeviceInfo": {
-        "type": "object",
-        "properties": {
-          "deviceId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "deviceName": {
-            "type": "string",
-            "nullable": true
-          },
-          "deviceType": {
-            "type": "string",
-            "nullable": true
-          },
-          "platformName": {
-            "type": "string",
-            "nullable": true
-          }
+      "additionalProperties": false
+    },
+    "OpenClDeviceInfo": {
+      "type": "object",
+      "properties": {
+        "deviceId": {
+          "format": "int32",
+          "type": "integer"
         },
-        "additionalProperties": false
+        "deviceName": {
+          "type": "string"
+        },
+        "deviceType": {
+          "type": "string"
+        },
+        "platformName": {
+          "type": "string"
+        }
       },
-      "OpenClKernelInfo": {
-        "type": "object",
-        "properties": {
-          "index": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "filePath": {
-            "type": "string",
-            "nullable": true
-          },
-          "functionName": {
-            "type": "string",
-            "nullable": true
-          },
-          "argumentNames": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "argumentsCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "argumentTypeNames": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "inputPointerTypeName": {
-            "type": "string",
-            "nullable": true
-          },
-          "outputPointerTypeName": {
-            "type": "string",
-            "nullable": true
-          },
-          "mediaType": {
-            "type": "string",
-            "nullable": true
-          },
-          "entry": {
-            "type": "string",
-            "nullable": true
+      "additionalProperties": false
+    },
+    "OpenClKernelInfo": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "filePath": {
+          "type": "string"
+        },
+        "functionName": {
+          "type": "string"
+        },
+        "argumentNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         },
-        "additionalProperties": false
+        "argumentsCount": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "argumentTypeNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inputPointerTypeName": {
+          "type": "string"
+        },
+        "outputPointerTypeName": {
+          "type": "string"
+        },
+        "mediaType": {
+          "type": "string"
+        },
+        "entry": {
+          "type": "string"
+        }
       },
-      "OpenClMemoryInfo": {
-        "type": "object",
-        "properties": {
-          "pointers": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "nullable": true
-          },
-          "lengths": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "nullable": true
-          },
-          "indexPointer": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "indexLength": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "count": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "totalLength": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "dataTypeSize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "dataTypeName": {
-            "type": "string",
-            "nullable": true
-          },
-          "totalSizeBytes": {
-            "type": "integer",
-            "format": "int64"
+      "additionalProperties": false
+    },
+    "OpenClMemoryInfo": {
+      "type": "object",
+      "properties": {
+        "pointers": {
+          "type": "array",
+          "items": {
+            "format": "int64",
+            "type": "integer"
           }
         },
-        "additionalProperties": false
+        "lengths": {
+          "type": "array",
+          "items": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "indexPointer": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "indexLength": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "count": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "totalLength": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "dataTypeSize": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "dataTypeName": {
+          "type": "string"
+        },
+        "totalSizeBytes": {
+          "format": "int64",
+          "type": "integer"
+        }
       },
-      "OpenClServiceInfo": {
-        "type": "object",
-        "properties": {
-          "deviceId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "deviceName": {
-            "type": "string",
-            "nullable": true
-          },
-          "platformName": {
-            "type": "string",
-            "nullable": true
-          },
-          "initialized": {
-            "type": "boolean"
-          },
-          "status": {
-            "type": "string",
-            "nullable": true
-          }
+      "additionalProperties": false
+    },
+    "OpenClServiceInfo": {
+      "type": "object",
+      "properties": {
+        "deviceId": {
+          "format": "int32",
+          "type": "integer"
         },
-        "additionalProperties": false
+        "deviceName": {
+          "type": "string"
+        },
+        "platformName": {
+          "type": "string"
+        },
+        "initialized": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string"
+        }
       },
-      "OpenClUsageInfo": {
-        "type": "object",
-        "properties": {
-          "totalMemory": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "usedMemory": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "freeMemory": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "usagePercentage": {
-            "type": "number",
-            "format": "float"
-          },
-          "sizeUnit": {
-            "type": "string",
-            "nullable": true
-          }
+      "additionalProperties": false
+    },
+    "OpenClUsageInfo": {
+      "type": "object",
+      "properties": {
+        "totalMemory": {
+          "format": "int64",
+          "type": "integer"
         },
-        "additionalProperties": false
+        "usedMemory": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "freeMemory": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "usagePercentage": {
+          "format": "float",
+          "type": "number"
+        },
+        "sizeUnit": {
+          "type": "string"
+        }
       },
-      "ProblemDetails": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+      "additionalProperties": false
+    },
+    "ProblemDetails": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
         },
-        "additionalProperties": {}
-      }
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "instance": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
     }
   }
 }

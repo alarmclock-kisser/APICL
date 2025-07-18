@@ -181,12 +181,12 @@ namespace APICL.Api.Controllers
             }
         }
 
-        [HttpGet("kernels")]
+        [HttpGet("kernels/{filter}")]
         [ProducesResponseType(typeof(IEnumerable<OpenClKernelInfo>), 200)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult<IEnumerable<OpenClKernelInfo>>> GetKernels()
+        public async Task<ActionResult<IEnumerable<OpenClKernelInfo>>> GetKernels(string filter = "")
         {
             if (this.openClService.KernelCompiler == null)
             {
@@ -196,11 +196,17 @@ namespace APICL.Api.Controllers
             {
                 var infos = await Task.Run(() => this.openClService.KernelCompiler.Files
                     .Select((file, index) => new OpenClKernelInfo(this.openClService.KernelCompiler, index))
-                    .ToList());
+                    .Where(info => string.IsNullOrEmpty(filter) || info.FunctionName.Contains(filter, StringComparison.OrdinalIgnoreCase))
+					.ToList());
 
                 if (infos.Count <= 0)
                 {
-                    return this.NoContent();
+                    if (!string.IsNullOrEmpty(filter))
+                    {
+                        return this.NotFound($"No kernels with function name found containing '{filter}'");
+					}
+
+					return this.NoContent();
                 }
 
                 return this.Ok(infos);
