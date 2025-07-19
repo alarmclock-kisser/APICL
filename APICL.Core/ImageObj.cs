@@ -37,29 +37,19 @@ namespace APICL.Core
 
 			try
 			{
-				using var img = Image.LoadAsync(filePath).GetAwaiter().GetResult();
+				this.Img = Image.LoadAsync(filePath).GetAwaiter().GetResult().CloneAs<Rgba32>();
 
-				lock (this.lockObj)
-				{
-					this.Img = this.Img?.CloneAs<Rgba32>();
-				}
+				this.Img = this.Img?.CloneAs<Rgba32>();
 
 				this.Width = this.Img?.Width ?? 0;
 				this.Height = this.Img?.Height ?? 0;
 				this.Channels = 4;
 				this.Bitdepth = this.Img?.PixelType.BitsPerPixel ?? 0;
-
-				img.Dispose();
-				GC.Collect();
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine($"Error loading image {filePath}: {ex.Message}");
 				this.Img = null;
-			}
-			finally
-			{
-				Task.Yield();
 			}
 		}
 
@@ -71,10 +61,7 @@ namespace APICL.Core
 
 			try
 			{
-				lock(this.lockObj)
-				{
-					this.Img = Image.LoadPixelData<Rgba32>(rawPixelData.ToArray(), width, height);
-				}
+				this.Img = Image.LoadPixelData<Rgba32>(rawPixelData.ToArray(), width, height);
 
 				this.Width = this.Img.Width;
 				this.Height = this.Img.Height;
@@ -95,34 +82,27 @@ namespace APICL.Core
 				return string.Empty;
 			}
 
-			Image<Rgba32> imgClone;
-
-			lock (this.lockObj)
-			{
-				imgClone = this.Img.CloneAs<Rgba32>();
-			}
-
 			try
 			{
-				// Get image encoder based on format
-				IImageEncoder encoder = format.ToLower() switch
+				using (var imgClone = this.Img.CloneAs<Rgba32>())
+				using (var ms = new MemoryStream())
 				{
-					"png" => new SixLabors.ImageSharp.Formats.Png.PngEncoder(),
-					"jpeg" => new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder(),
-					"gif" => new SixLabors.ImageSharp.Formats.Gif.GifEncoder(),
-					_ => new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
-				};
+					IImageEncoder encoder = format.ToLower() switch
+					{
+						"png" => new SixLabors.ImageSharp.Formats.Png.PngEncoder(),
+						"jpeg" or "jpg" => new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder(),
+						"gif" => new SixLabors.ImageSharp.Formats.Gif.GifEncoder(),
+						_ => new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+					};
 
-				// Save memory stream async
-				var ms = new MemoryStream();
-				await imgClone.SaveAsync(ms, encoder);
-				ms.Position = 0;
-				return await Task.Run(() => Convert.ToBase64String(ms.ToArray()));
+					await imgClone.SaveAsync(ms, encoder);
+					return Convert.ToBase64String(ms.ToArray());
+				}
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"Fehler bei der Base64-Konvertierung: {ex.Message}");
-				return ex + " (" + ex.InnerException + ").";
+				Console.WriteLine($"Base64 conversion error: {ex}");
+				return string.Empty;
 			}
 		}
 

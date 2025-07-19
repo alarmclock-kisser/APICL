@@ -179,7 +179,7 @@ namespace APICL.Api.Controllers
 				var imgObj = await this.imageCollection.LoadImage(tempPath);
 
 				// Keep the original file name in the ImgObj
-				if (imgObj != null)
+				if (imgObj != null && imgObj.Guid != Guid.Empty && imgObj.Img != null)
 				{
 					imgObj.Name = imgObj.Name ?? Path.GetFileNameWithoutExtension(originalFileName);
 					imgObj.Filepath = originalFileName;
@@ -190,7 +190,7 @@ namespace APICL.Api.Controllers
 					return this.BadRequest("Failed to load image from uploaded file.");
 				}
 
-				var info = this.imageCollection.Images.Contains(imgObj) ? await Task.Run(() => new ImageObjInfo(imgObj, sw.Elapsed)) : null;
+				var info = this.imageCollection[imgObj.Guid];
 
 				if (info == null || info.Guid == Guid.Empty)
 				{
@@ -203,7 +203,10 @@ namespace APICL.Api.Controllers
 			}
 			catch (Exception ex)
 			{
-				return this.BadRequest($"Error uploading image: {ex.Message}");
+				string msg = $"Error uploading image: {ex.Message} ({ex.InnerException?.Message})";
+				Console.WriteLine(msg);
+
+				return this.BadRequest(msg);
 			}
 			finally
 			{
@@ -277,6 +280,7 @@ namespace APICL.Api.Controllers
 		[ProducesResponseType(204)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(500)]
+		[Produces("application/json")]
 		public async Task<ActionResult<ImageData>> GetBase64(Guid guid, string format = "bmp")
 		{
 			try
@@ -287,25 +291,25 @@ namespace APICL.Api.Controllers
 					return this.NotFound($"No image found with Guid '{guid}'");
 				}
 
-				var code = await obj.AsBase64();
+				var code = await obj.AsBase64(format);
 
 				if (string.IsNullOrEmpty(code))
 				{
 					return this.NoContent();
 				}
 
-				var data = await Task.Run(() => new ImageData(obj));
-
-				if (data == null || data.Guid == Guid.Empty)
+				//var data = new ImageData(code, obj.Width, obj.Height);
+				var data = new ImageData(obj.Guid, code, obj.Width, obj.Height);
+				if (data.Base64 == string.Empty)
 				{
-					return this.NotFound($"Failed to create ImageData for GUID '{guid}'");
+					data.Base64 = code;
 				}
 
 				return this.Ok(data);
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"Error calling 'api/images/{guid}/image64': " + ex.Message);
+				Console.WriteLine("Error getting base64 string: " + ex.Message);
 				return this.StatusCode(500, ex);
 			}
 		}

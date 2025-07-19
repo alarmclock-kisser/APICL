@@ -56,13 +56,13 @@
     private ImageObjInfo selectedImageInfo => imageInfos.FirstOrDefault(info => info.Guid == selectedImageGuid) ?? new ImageObjInfo(null);
 
     private int shortenInfoLength = 0;
-    private bool singleLineInfo { get; set; } = true;
+    public bool singleLineInfo { get; set; } = false;
     private string selectedInfoString => selectedImageInfo?.ToString(shortenInfoLength, singleLineInfo) ?? "No image selected";
 
     private IEnumerable<OpenClKernelInfo> kernelInfos = [];
     private string kernelFilter { get; set; } = "mandelbrot";
     private string selectedKernelName = string.Empty;
-    
+
 
 
     private bool allowScopedSession { get; set; } = false;
@@ -155,7 +155,7 @@
         }
         finally
         {
-            await LoadImage().ConfigureAwait(false);
+            await LoadImage().ConfigureAwait(true);
             await RefreshInfos();
         }
     }

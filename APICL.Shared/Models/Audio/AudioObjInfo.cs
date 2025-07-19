@@ -1,4 +1,5 @@
 ﻿using APICL.Core;
+using System.Text.Json.Serialization;
 
 namespace APICL.Shared
 {
@@ -34,7 +35,15 @@ namespace APICL.Shared
 
         public string Entry { get; set; } = string.Empty;
 
-        public AudioObjInfo(AudioObj? obj, TimeSpan? loadingTime = null, TimeSpan? executionTime = null)
+
+
+        public AudioObjInfo()
+        {
+			// Default constructor for serialization
+		}
+
+		[JsonConstructor]
+		public AudioObjInfo(AudioObj? obj, TimeSpan? loadingTime = null, TimeSpan? executionTime = null)
         {
             if (obj == null)
             {

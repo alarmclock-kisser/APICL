@@ -202,9 +202,9 @@ namespace APICL.Client
             }
         }
 
-        public async Task<ImageData> GetBase64Image(Guid guid)
+        public async Task<ImageData> GetBase64Image(Guid guid, string format = "bmp")
         {
-            var task = this.internalClient.Image64Async(guid);
+            var task = this.internalClient.Image64Async(guid, format);
 
             try
             {
@@ -213,7 +213,7 @@ namespace APICL.Client
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return new ImageData(null);
+                return new ImageData();
             }
         }
 

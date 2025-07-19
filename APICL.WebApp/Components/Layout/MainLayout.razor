@@ -42,17 +42,43 @@
         </RadzenBody>
 
         <!-- Log-Footer -->
-        <RadzenFooter Style="position: sticky; bottom: 0; background-color: #f8f9fa; padding: 10px;">
-            <RadzenStack Orientation="Orientation.Vertical">
-                <RadzenText Text="Log Entries:" TextStyle="TextStyle.Subtitle2" />
-                <div id="logContainer" @ref="logContainer" style="overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
-                    @foreach (var entry in logEntries.Values)
+        <RadzenFooter Style="position: sticky; 
+                           bottom: 0; 
+                           background-color: #f8f9fa; 
+                           padding: 10px;
+                           height: 25vh; /* WICHTIG: Viewport-Höhe */
+                           display: flex;
+                           flex-direction: column;
+                           overflow: hidden;">
+    
+            <RadzenStack Orientation="Orientation.Vertical" 
+                        Style="flex-grow: 1; 
+                               overflow: hidden;
+                               height: calc(25vh - 50px); /* Platz für Button */">
+        
+                <RadzenText Text="Log:" TextStyle="TextStyle.Subtitle2" />
+        
+                <div id="logContainer" 
+                     @ref="logContainer" 
+                     style="overflow-y: auto; 
+                            border: 1px solid #ccc; 
+                            padding: 10px;
+                            flex-grow: 1;
+                            max-height: 100%;
+                            word-break: break-word;">
+    
+                    @foreach (var entry in logEntries.OrderBy(kv => kv.Key).TakeLast(maxLogEntries))
                     {
-                        <div>@entry</div>
+                        <div style="white-space: pre-wrap; word-wrap: break-word; padding: 2px 0; border-bottom: 1px solid #eee;"> @entry.Value </div>
                     }
                 </div>
             </RadzenStack>
-            <RadzenButton Text="Clear Log" Click="() => logEntries.Clear()" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.Small" />
+    
+            <RadzenButton Text="Clear Log" 
+                         Click="() => logEntries.Clear()" 
+                         ButtonStyle="ButtonStyle.Light" 
+                         Size="ButtonSize.Small"
+                         Style="margin-top: 8px;" />
         </RadzenFooter>
     </RadzenLayout>
 </CascadingValue>
@@ -60,16 +86,16 @@
 @code {
 
     public Func<string, bool, Task> AddLogEntryMethod => AddLogEntry;
-    private string LogPrefix { get; set; } = "[GLOBAL] ";
-    private Stopwatch stopwatch = new Stopwatch();
-    private bool logMinimal { get; set; } = true;
-    private bool logElapsed { get; set; } = true;
+    public string LogPrefix { get; set; } = "[GLOBAL] ";
+    public bool logMinimal { get; set; } = true;
+    public bool logElapsed { get; set; } = false;
 
     bool sidebarExpanded = false;
     bool darkModeEnabled = false;
     private ConcurrentDictionary<long, string> logEntries = [];
     private ElementReference logContainer;
     private int maxLogEntries = 100;
+    public bool experimentalAllowEntryUpdates { get; set; } = false;
 
 
 
@@ -80,11 +106,13 @@
             message += ".";
         }
 
-        stopwatch.Restart();
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        message = "[" + DateTime.Now.ToString("HH:mm:ss.fff") + "] " + message;
 
         try
         {
-            if (overwriteLastEntry && logEntries.Any())
+            if (overwriteLastEntry && logEntries.Any() && experimentalAllowEntryUpdates)
             {
                 logEntries[logEntries.Keys.Last()] = message;
             }
@@ -92,7 +120,9 @@
             {
                 logEntries.TryAdd(DateTime.Now.Ticks, message);
                 if (logEntries.Count > maxLogEntries)
+                {
                     logEntries.TryRemove(logEntries.Keys.First(), out _);
+                }
             }
         }
         catch (Exception ex)
@@ -103,7 +133,12 @@
         {
             stopwatch.Stop();
 
-            if (overwriteLastEntry && logElapsed)
+            if (logElapsed)
+            {
+                message += $" (Elapsed: {stopwatch.ElapsedMilliseconds} ms)";
+            }
+
+            if (overwriteLastEntry && experimentalAllowEntryUpdates)
             {
                 // If overwritten & allowed, add elapsed ms to the last entry
                 if (logEntries.Any())

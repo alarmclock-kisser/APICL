@@ -76,6 +76,7 @@
     private string selectedInfoString => selectedAudioInfo?.ToString(shortenInfoLength, singleLineInfo) ?? "No audio selected";
 
     private IEnumerable<OpenClKernelInfo> kernelInfos = [];
+    public string kernelFilter = "stretch";
     private string selectedKernelName = string.Empty;
 
     private float targetBpm = 120.0f;
@@ -133,7 +134,7 @@
             audioInfos = await ApiClient.GetAudioInfos();
 
             // Get kernel infos
-            kernelInfos = await ApiClient.GetOpenClKernelInfos("stretch");
+            kernelInfos = await ApiClient.GetOpenClKernelInfos(kernelFilter);
 
             await AddLog($"Refreshed infos ({sw.ElapsedMilliseconds} ms elapsed).", true).ConfigureAwait(false);
         }

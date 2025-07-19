@@ -1,4 +1,5 @@
 ﻿using APICL.OpenCl;
+using System.Text.Json.Serialization;
 
 namespace APICL.Shared
 {
@@ -19,6 +20,14 @@ namespace APICL.Shared
         public string MediaType { get; set; } = "DIV";
         public string Entry { get; set; } = string.Empty;
 
+
+
+		public OpenClKernelInfo()
+		{
+			// Empty default ctor
+		}
+
+		[JsonConstructor]
 		public OpenClKernelInfo(OpenClKernelCompiler? compiler, int index)
 		{
 			this.Index = index;
@@ -34,24 +43,32 @@ namespace APICL.Shared
 				return;
 			}
 
-			var file = compiler.Files.ElementAt(index);
-			var args = Task.Run(() =>
+			try
 			{
-				return compiler.GetKernelArguments(null, file.Key);
-			}).GetAwaiter().GetResult();
+				var file = compiler.Files.ElementAt(index);
+				var args = Task.Run(() =>
+				{
+					return compiler.GetKernelArguments(null, file.Key);
+				}).Result;
 
-			this.FilePath = file.Key;
-			this.FunctionName = file.Value;
-			this.ArgumentNames = args.Select(arg => arg.Key).ToList();
-			this.ArgumentTypes = args.Select(arg => arg.Value).ToList();
-			this.ArgumentTypeNames = this.ArgumentTypes.Select(type => type.Name).ToList();
-			this.ArgumentsCount = this.ArgumentNames.Count == this.ArgumentTypes.Count ? this.ArgumentTypes.Count : -1;
-			this.InputPointerTypeName = this.ArgumentTypeNames.FirstOrDefault(n => n.Contains('*')) ?? "void*";
-			this.OutputPointerTypeName = this.ArgumentTypeNames.LastOrDefault(n => n.Contains('*')) ?? string.Empty;
+				this.FilePath = file.Key;
+				this.FunctionName = file.Value;
+				this.ArgumentNames = args.Select(arg => arg.Key).ToList();
+				this.ArgumentTypes = args.Select(arg => arg.Value).ToList();
+				this.ArgumentTypeNames = this.ArgumentTypes.Select(type => type.Name).ToList();
+				this.ArgumentsCount = this.ArgumentNames.Count == this.ArgumentTypes.Count ? this.ArgumentTypes.Count : -1;
+				this.InputPointerTypeName = this.ArgumentTypeNames.FirstOrDefault(n => n.Contains('*')) ?? "void*";
+				this.OutputPointerTypeName = this.ArgumentTypeNames.LastOrDefault(n => n.Contains('*')) ?? string.Empty;
 
-            this.MediaType = this.FilePath.Contains(@"\Image\") ? "IMG" : this.MediaType;
-            this.MediaType = this.FilePath.Contains(@"\Audio\") ? "AUD" : this.MediaType;
-            this.Entry = $"{this.MediaType}: '{this.FunctionName}' [{this.ArgumentsCount}] ({this.InputPointerTypeName} -> {this.OutputPointerTypeName})";
-        }
+				this.MediaType = this.FilePath.Contains(@"\Image\") ? "IMG" : this.MediaType;
+				this.MediaType = this.FilePath.Contains(@"\Audio\") ? "AUD" : this.MediaType;
+				this.Entry = $"{this.MediaType}: '{this.FunctionName}' [{this.ArgumentsCount}] ({this.InputPointerTypeName} -> {this.OutputPointerTypeName})";
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error creating OpenClKernelInfo object for index [{index}]: {ex.Message} ({ex.InnerException?.Message})");
+				this.Index = -1;
+			}
+		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using APICL.Core;
+using System.Text.Json.Serialization;
 
 namespace APICL.Shared
 {
@@ -27,7 +28,13 @@ namespace APICL.Shared
 
 
 
-        public ImageObjInfo(ImageObj? obj, TimeSpan? loadingTime = null, TimeSpan? executionTime = null)
+		public ImageObjInfo()
+		{
+			// Default constructor for serialization
+		}
+
+		[JsonConstructor]
+		public ImageObjInfo(ImageObj? obj, TimeSpan? loadingTime = null, TimeSpan? executionTime = null)
         {
             if (obj == null)
             {
@@ -81,13 +88,14 @@ namespace APICL.Shared
 				string pointer = shorten < this.Pointer.ToString().Length ? this.Pointer.ToString("X") : this.Pointer.ToString();
 
 				return $"'{name}' {br} " +
-                       $"Guid: {guid} {br}" +
+                       $"({guid}) {br}" +
 					   $"{bitdepth} bit {br}" +
 					   $"{channels} ch. {br}" +
 					   $"{size} {br}" +
 					   $"<{pointer}>";
 			}
 			return $"'{this.Name}' {br} " +
+                   $"({this.Guid}) {br}" +
 				   $"Bitdepth: {this.Bitdepth} bit {br}" +
 				   $"Channels: {this.Channels} {br}" +
 				   $"Size: {this.SizeInBytes / 1024.0 / 1024.0:F2} MB {br}" +

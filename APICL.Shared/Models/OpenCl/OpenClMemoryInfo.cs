@@ -1,5 +1,7 @@
 ﻿using APICL.OpenCl;
+using System;
 using System.Runtime.InteropServices;
+using System.Text.Json.Serialization;
 
 namespace APICL.Shared
 {
@@ -17,9 +19,17 @@ namespace APICL.Shared
 		public string DataTypeName { get; set; } = string.Empty;
 		public long TotalSizeBytes { get; set; } = 0;
 
-		// Important: NOT a filed, since not JSON-deserializable
+		// Important: Not a data field, since it is not JSON-deserializable !
 		private Type DataType = typeof(object);
 
+
+
+		public OpenClMemoryInfo()
+		{
+			// Empty default ctor
+		}
+
+		[JsonConstructor]
 		public OpenClMemoryInfo(ClMem? obj = null)
 		{
             if (obj == null)
@@ -27,17 +37,24 @@ namespace APICL.Shared
 				return;
             }
 
-			this.Pointers = obj.Buffers.Select(b => (long) b).ToList();
-			this.Lengths = obj.Lengths.Select(l => (long) l).ToList();
-			this.DataType = obj.ElementType ?? typeof(object);
+			try
+			{
+				this.Pointers = obj.Buffers.Select(b => (long) b).ToList();
+				this.Lengths = obj.Lengths.Select(l => (long) l).ToList();
+				this.DataType = obj.ElementType ?? typeof(object);
 
-			this.IndexPointer = this.Pointers.FirstOrDefault();
-			this.IndexLength = this.Lengths.FirstOrDefault();
-			this.Count = this.Pointers.LongCount();
-			this.TotalLength = this.Lengths.Sum();
-			this.DataTypeSize = Marshal.SizeOf(this.DataType);
-			this.DataTypeName = this.DataType.Name;
-			this.TotalSizeBytes = this.Lengths.Sum(length => length * this.DataTypeSize);
+				this.IndexPointer = this.Pointers.FirstOrDefault();
+				this.IndexLength = this.Lengths.FirstOrDefault();
+				this.Count = this.Pointers.LongCount();
+				this.TotalLength = this.Lengths.Sum();
+				this.DataTypeSize = Marshal.SizeOf(this.DataType);
+				this.DataTypeName = this.DataType.Name;
+				this.TotalSizeBytes = this.Lengths.Sum(length => length * this.DataTypeSize);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error creating OpenClMemoryInfo object: {ex.Message} ({ex.InnerException?.Message})");
+			}
 		}
 	}
 }

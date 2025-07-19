@@ -634,15 +634,13 @@
         }
       }
     },
-    "/api/Image/images/{guid}/image64": {
+    "/api/Image/images/{guid}/image64/{format}": {
       "get": {
         "tags": [
           "Image"
         ],
         "produces": [
-          "text/plain",
-          "application/json",
-          "text/json"
+          "application/json"
         ],
         "parameters": [
           {
@@ -651,6 +649,13 @@
             "required": true,
             "type": "string",
             "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "format",
+            "required": true,
+            "type": "string",
+            "default": "bmp"
           }
         ],
         "responses": {
@@ -1227,6 +1232,14 @@
         "duration": {
           "format": "double",
           "type": "number"
+        },
+        "durationTimeSpan": {
+          "format": "date-span",
+          "type": "string",
+          "readOnly": true
+        },
+        "durationString": {
+          "type": "string"
         },
         "lastProcessingTime": {
           "type": "string"

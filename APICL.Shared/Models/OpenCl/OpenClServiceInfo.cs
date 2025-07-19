@@ -1,4 +1,6 @@
 ﻿using APICL.OpenCl;
+using System;
+using System.Text.Json.Serialization;
 
 namespace APICL.Shared
 {
@@ -10,6 +12,14 @@ namespace APICL.Shared
 		public bool Initialized { get; set; } = false;
 		public string Status { get; set; } = "Disposed.";
 
+
+
+		public OpenClServiceInfo()
+		{
+			// Default constructor for serialization
+		}
+
+		[JsonConstructor]
 		public OpenClServiceInfo(OpenClService? service)
 		{
             if (service == null)
@@ -23,14 +33,22 @@ namespace APICL.Shared
 				return;
 			}
 
-			var device = service.Devices.ElementAt(service.INDEX).Key;
-			var platform = service.Devices.ElementAt(service.INDEX).Value;
+			try
+			{
+				var device = service.Devices.ElementAt(service.INDEX).Key;
+				var platform = service.Devices.ElementAt(service.INDEX).Value;
 
-			this.DeviceId = service.INDEX;
-			this.DeviceName = service.GetDeviceInfo(device, OpenTK.Compute.OpenCL.DeviceInfo.Name) ?? "N/A";
-			this.PlatformName = service.GetPlatformInfo(platform, OpenTK.Compute.OpenCL.PlatformInfo.Name) ?? "N/A";
+				this.DeviceId = service.INDEX;
+				this.DeviceName = service.GetDeviceInfo(device, OpenTK.Compute.OpenCL.DeviceInfo.Name) ?? "N/A";
+				this.PlatformName = service.GetPlatformInfo(platform, OpenTK.Compute.OpenCL.PlatformInfo.Name) ?? "N/A";
 
-			this.Status = this.Initialized ? $"Initialized [{this.DeviceId}]" : "Disposed.";
+				this.Status = this.Initialized ? $"Initialized [{this.DeviceId}]" : "Disposed.";
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error creating OpenClServiceInfo object with device id [{this.DeviceId}]: {ex.Message} ({ex.InnerException?.Message})");
+				this.DeviceId = -1;
+			}
 		}
 	}
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace APICL.Shared
@@ -26,6 +27,12 @@ namespace APICL.Shared
 		public int WaveformHeight { get; set; } = 0;
 
 
+		public AudioData()
+		{
+			// Default constructor for serialization
+		}
+
+		[JsonConstructor]
 		public AudioData(AudioObj? obj)
 		{
 			if (obj == null)

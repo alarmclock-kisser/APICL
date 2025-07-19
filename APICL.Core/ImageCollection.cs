@@ -87,7 +87,7 @@ namespace APICL.Core
 
         public async Task<ImageObj?> LoadImage(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
+            if (!File.Exists(filePath))
             {
                 Console.WriteLine($"LoadImage: File not found or path empty: {filePath}");
                 return null;
@@ -99,15 +99,22 @@ namespace APICL.Core
             {
 				obj = await Task.Run(() =>
 				{
-					lock (this.lockObj)
-					{
-						return new ImageObj(filePath);
-					}
+					return new ImageObj(filePath);
 				});
 			}
             catch (Exception ex)
             {
-                Console.WriteLine($"Error loading image from file '{filePath}': {ex.Message}");
+                try
+                {
+                    obj = new ImageObj(filePath);
+                }
+                catch (Exception innerEx)
+                {
+                    Console.WriteLine($"Error creating ImageObj from file '{filePath}': {innerEx.Message}");
+                    return null;
+                }
+
+				Console.WriteLine($"Error loading image from file '{filePath}': {ex.Message}");
                 return null;
 			}
 
@@ -117,7 +124,7 @@ namespace APICL.Core
                 return obj;
             }
 
-			obj.Dispose();
+			// obj.Dispose();
 			Console.WriteLine($"Failed to add image '{obj.Name}' (ID: {obj.Guid}). An image with this ID might already exist.");
 			return null;
 		}
