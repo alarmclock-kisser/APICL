@@ -72,7 +72,7 @@
     private AudioObjInfo selectedAudioInfo => audioInfos.FirstOrDefault(info => info.Guid == selectedAudioGuid) ?? new AudioObjInfo(null);
 
     private int shortenInfoLength = 0;
-    private bool singleLineInfo = true;
+    private bool singleLineInfo = false;
     private string selectedInfoString => selectedAudioInfo?.ToString(shortenInfoLength, singleLineInfo) ?? "No audio selected";
 
     private IEnumerable<OpenClKernelInfo> kernelInfos = [];
@@ -224,7 +224,6 @@
     {
         await AddLog("Uploading audio file...").ConfigureAwait(false);
         var info = new AudioObjInfo(null);
-        selectedAudioGuid = Guid.Empty;
 
         try
         {
@@ -243,7 +242,7 @@
         }
         finally
         {
-            await LoadWaveform().ConfigureAwait(false);
+            await LoadWaveform();
             await RefreshInfos();
         }
     }
@@ -258,10 +257,10 @@
             try
             {
                 // Direkt die URL zum API-Endpunkt aufrufen
-                string downloadUrl = $"{ApiConfig.BaseUrl}/api/audio/download/{selectedAudioInfo.Guid}";
+                string downloadUrl = $"{ApiConfig.BaseUrl}/api/audio/audios/download/{selectedAudioInfo.Guid}";
 
                 // Rufe die JavaScript-Funktion auf, um den Download zu starten
-                await JSRuntime.InvokeVoidAsync("downloadFileFromUrl", downloadUrl, $"{fileName}.wav").ConfigureAwait(false);
+                await JSRuntime.InvokeVoidAsync("downloadFileFromUrl", downloadUrl, $"{fileName}.wav");
 
                 // Füge diese Zeile hinzu:
                 await AddLog($"Got Download-URL: {downloadUrl}").ConfigureAwait(false);

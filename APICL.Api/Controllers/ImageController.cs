@@ -243,7 +243,7 @@ namespace APICL.Api.Controllers
 
 			try
 			{
-				var obj = await Task.Run(() => this.imageCollection[guid]);
+				var obj = this.imageCollection[guid];
 
 				if (obj == null)
 				{

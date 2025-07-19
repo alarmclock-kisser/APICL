@@ -196,10 +196,9 @@ namespace APICL.Api.Controllers
             {
                 var infos = await Task.Run(() => this.openClService.KernelCompiler.Files
                     .Select((file, index) => new OpenClKernelInfo(this.openClService.KernelCompiler, index))
-                    .Where(info => string.IsNullOrEmpty(filter) || info.FunctionName.Contains(filter, StringComparison.OrdinalIgnoreCase))
-					.ToList());
+                    .Where(info => string.IsNullOrEmpty(filter) || info.FunctionName.Contains(filter, StringComparison.OrdinalIgnoreCase)));
 
-                if (infos.Count <= 0)
+                if (infos.Count() <= 0)
                 {
                     if (!string.IsNullOrEmpty(filter))
                     {

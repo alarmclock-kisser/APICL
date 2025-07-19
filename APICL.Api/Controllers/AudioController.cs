@@ -53,15 +53,14 @@ namespace APICL.Api.Controllers
 		{
 			try
 			{
-				var info = await Task.Run(() =>
-				{
-					return  this.audioCollection.Tracks.FirstOrDefault(i => i.Guid == guid);
-				});
+				var obj = this.audioCollection[guid];
 
-				if (info == null || info.Guid == Guid.Empty)
+				if (obj == null || obj.Guid == Guid.Empty)
 				{
 					return this.NoContent();
 				}
+
+				var info = await Task.Run(() => new AudioObjInfo(obj));
 
 				return this.Ok(info);
 			}
@@ -81,7 +80,7 @@ namespace APICL.Api.Controllers
 		{
 			try
 			{
-				var obj = await Task.Run(() => this.audioCollection[guid]);
+				var obj = this.audioCollection[guid];
 
 				if (obj == null)
 				{
@@ -151,7 +150,7 @@ namespace APICL.Api.Controllers
 					return this.BadRequest("Failed to load audio from uploaded file.");
 				}
 
-				var info = this.audioCollection.Tracks.Contains(obj) ? await Task.Run(() => new AudioObjInfo(obj, sw.Elapsed)) : null;
+				var info = this.audioCollection[obj.Guid];
 
 				if (info == null || info.Guid == Guid.Empty)
 				{
@@ -159,8 +158,13 @@ namespace APICL.Api.Controllers
 					return this.NotFound("Failed to retrieve audio information after upload.");
 				}
 
-				await this.clipboard.SetTextAsync(info.Guid.ToString());
-				return this.Created($"api/audios/{info.Guid}/info", info);
+				if (copyGuid)
+				{
+					// Copy the GUID to the clipboard
+					this.clipboard.SetText(info.Guid.ToString());
+				}
+
+				return this.Created($"api/audio/audios/{info.Guid}/info", info);
 			}
 			catch (Exception ex)
 			{

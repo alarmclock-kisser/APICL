@@ -48,7 +48,7 @@ namespace APICL.Shared
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error creating KernelArguments object for file '{Path.GetFileName(match)}': {ex.Message} ({ex.InnerException?.Message})";
+                Console.WriteLine($"Error creating KernelArguments object for file '{Path.GetFileName(match)}': {ex.Message} ({ex.InnerException?.Message})");
                 this.ArgumentNames = [];
                 this.ArgumentTypes = [];
             }

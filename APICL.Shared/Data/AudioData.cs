@@ -51,7 +51,7 @@ namespace APICL.Shared
 			this.Length = obj.Data.LongLength;
 			this.Pointer = obj.Pointer;
 
-			this.WaveformBase64 = obj.WaveformBase64;
+			this.WaveformBase64 = obj.AsBase64().Result;
 			this.WaveformWidth = obj.WaveformSize.Width;
 			this.WaveformHeight = obj.WaveformSize.Height;
 		}

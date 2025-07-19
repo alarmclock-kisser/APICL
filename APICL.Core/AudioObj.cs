@@ -1,6 +1,7 @@
 ﻿using APICL.Core.CommonStaticMethods;
 using NAudio.Wave;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System.Buffers;
@@ -79,23 +80,6 @@ namespace APICL.Core
 		}
 		public int WaveformUpdateFrequency { get; set; } = 100;
 
-		public string WaveformBase64
-		{
-			get
-			{
-				if (this.WaveformImage == null || this.WaveformImage.Width <= 0 || this.WaveformImage.Height <= 0)
-				{
-					return string.Empty;
-				}
-
-				return Task.Run(() =>
-				{
-					using var ms = new MemoryStream();
-					this.WaveformImage.SaveAsPngAsync(ms);
-					return Convert.ToBase64String(ms.ToArray());
-				}).GetAwaiter().GetResult();
-			}
-		}
 
 
 		// ----- ----- ----- CONSTRUCTOR ----- ----- ----- \\
@@ -247,6 +231,37 @@ namespace APICL.Core
 			}
 
 			return bpm;
+		}
+
+		public async Task<string> AsBase64(string format = "bmp")
+		{
+			if (this.WaveformImage == null)
+			{
+				return string.Empty;
+			}
+
+			try
+			{
+				using (var imgClone = this.WaveformImage.CloneAs<Rgba32>())
+				using (var ms = new MemoryStream())
+				{
+					IImageEncoder encoder = format.ToLower() switch
+					{
+						"png" => new SixLabors.ImageSharp.Formats.Png.PngEncoder(),
+						"jpeg" or "jpg" => new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder(),
+						"gif" => new SixLabors.ImageSharp.Formats.Gif.GifEncoder(),
+						_ => new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+					};
+
+					await imgClone.SaveAsync(ms, encoder);
+					return Convert.ToBase64String(ms.ToArray());
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Base64 conversion error: {ex}");
+				return string.Empty;
+			}
 		}
 
 		public async Task<IEnumerable<byte>> GetBytes(int maxWorkers = -2)
