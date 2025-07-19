@@ -25,7 +25,10 @@ namespace APICL.Shared
         public bool Playing = false;
         public string PlayingString { get; set; } = "Stopped";
 
-		public long SizeInBytes = 0;
+		public long SizeInBytes
+        {
+            get => this.Length * (this.Bitdepth / 8) * this.Channels;
+		}
         public float SizeInMegaBytes => (float)(this.SizeInBytes / 1024.0 / 1024.0);
 		public string SizeString => $"{this.SizeInMegaBytes:F2} MB";
 		public double Duration = 0.0;
@@ -87,8 +90,6 @@ namespace APICL.Shared
                 this.LastLoadingTime = this.LastLoadingTimeSpan.ToString("hh':'mm':'ss'.'fff");
             }
 
-			this.SizeInBytes = this.Length * (this.Bitdepth / 8) * this.Channels;
-
             this.MemoryLocation = this.OnHost ? "Host" : "Device";
 
 			this.Duration = (this.Samplerate > 0 && this.Channels > 0) ? (double) this.Length / (this.Samplerate * this.Channels) : 0;
@@ -99,7 +100,7 @@ namespace APICL.Shared
 
         public string ToString(int shorten = 0, bool singleLine = true)
         {
-            string br = singleLine ? "| " : Environment.NewLine;
+			string br = singleLine ? "| " : Environment.NewLine;
 			string more = "...";
 			shorten = Math.Max(0, shorten - more.Length);
 

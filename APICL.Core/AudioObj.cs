@@ -35,7 +35,7 @@ namespace APICL.Core
 
 		public WaveOutEvent Player { get; set; } = new WaveOutEvent();
 		public bool Playing => this.Player.PlaybackState == PlaybackState.Playing;
-		public long SizeInBytes => this.Data.Length * (this.Bitdepth / 8) * this.Channels;
+		public long SizeInBytes = 0;
 		public double Duration => (this.Samplerate > 0 && this.Channels > 0) ? (double) this.Length / (this.Samplerate * this.Channels) : 0;
 
 		// ----- ----- ----- PROPERTIES ----- ----- ----- \\
@@ -159,6 +159,8 @@ namespace APICL.Core
 						this.Data = resizedData;
 					}
 				}
+
+				this.SizeInBytes = this.Data.Length * (this.Bitdepth / 8) * this.Channels;
 			}
 			catch (Exception ex)
 			{
@@ -436,6 +438,8 @@ namespace APICL.Core
 				this.Length = finalOutput.Length;
 				this.Pointer = keepPointer ? this.Pointer : IntPtr.Zero;
 			}).ConfigureAwait(false);
+
+			this.SizeInBytes = this.Data.Length * (this.Bitdepth / 8) * this.Channels;
 		}
 
 		public async Task Play(CancellationToken cancellationToken,
