@@ -29,7 +29,7 @@
 <body>
 <app>
     <component type="typeof(App)" render-mode="ServerPrerendered" />
-</app>
+    </app>
 <script src="_framework/blazor.server.js"></script>
 <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
 <script>
@@ -41,6 +41,21 @@
             anchorElement.click();
             document.body.removeChild(anchorElement);
         }
+    </script>
+    <script>
+        window.scrollToBottom = function (elementOrId) {
+            let element = elementOrId;
+            if (typeof elementOrId === "string") {
+                element = document.getElementById(elementOrId);
+            }
+            if (element) {
+                element.scrollTop = element.scrollHeight;
+                const lastEntry = element.lastElementChild;
+                if (lastEntry) {
+                    lastEntry.scrollIntoView({ behavior: "smooth" });
+                }
+            }
+        };
     </script>
 </body>
 </html>

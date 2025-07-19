@@ -272,12 +272,12 @@ namespace APICL.Api.Controllers
 			}
 		}
 
-		[HttpGet("images/{guid}/image64")]
+		[HttpGet("images/{guid}/image64/{format}")]
 		[ProducesResponseType(typeof(ImageData), 200)]
 		[ProducesResponseType(204)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(500)]
-		public async Task<ActionResult<ImageData>> GetBase64(Guid guid)
+		public async Task<ActionResult<ImageData>> GetBase64(Guid guid, string format = "bmp")
 		{
 			try
 			{

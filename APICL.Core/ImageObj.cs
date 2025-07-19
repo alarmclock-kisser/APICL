@@ -88,7 +88,7 @@ namespace APICL.Core
 			}
 		}
 
-		public async Task<string> AsBase64()
+		public async Task<string> AsBase64(string format = "bmp")
 		{
 			if (this.Img == null)
 			{
@@ -104,8 +104,18 @@ namespace APICL.Core
 
 			try
 			{
+				// Get image encoder based on format
+				IImageEncoder encoder = format.ToLower() switch
+				{
+					"png" => new SixLabors.ImageSharp.Formats.Png.PngEncoder(),
+					"jpeg" => new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder(),
+					"gif" => new SixLabors.ImageSharp.Formats.Gif.GifEncoder(),
+					_ => new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+				};
+
+				// Save memory stream async
 				var ms = new MemoryStream();
-				await imgClone.SaveAsBmpAsync(ms);
+				await imgClone.SaveAsync(ms, encoder);
 				ms.Position = 0;
 				return await Task.Run(() => Convert.ToBase64String(ms.ToArray()));
 			}

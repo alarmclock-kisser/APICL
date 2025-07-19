@@ -59,5 +59,39 @@ namespace APICL.Shared
 
             this.Entry = $"'{this.Name}' ({this.Width}x{this.Height}, {(this.SizeInBytes / 1024)} kB) <{(this.Pointer != 0 ? this.Pointer : "")}>";
         }
-    }
+
+		public string ToString(int shorten = 0, bool singleLine = true)
+		{
+			string br = singleLine ? "| " : Environment.NewLine;
+			string more = "...";
+			shorten = Math.Max(0, shorten - more.Length);
+
+			if (shorten > 0)
+			{
+				// Shorten strings to a maximum length
+				string name = this.Name.Length > shorten ? this.Name.Substring(0, shorten) + more : this.Name;
+				string guid = this.Guid.ToString().Length > shorten ? this.Guid.ToString().Substring(0, shorten) + more : this.Guid.ToString();
+				
+				string bitdepth = this.Bitdepth.ToString();
+				string channels = this.Channels.ToString();
+
+				string size = this.SizeInBytes / 1024.0 / 1024.0 > 1000 ? $"{this.SizeInBytes / 1024.0 / 1024.0 / 1024.0:F2} GB" : $"{this.SizeInBytes / 1024.0 / 1024.0:F2} MB";
+
+				// Pointer as decimal if more places than shorten, otherwise as hex
+				string pointer = shorten < this.Pointer.ToString().Length ? this.Pointer.ToString("X") : this.Pointer.ToString();
+
+				return $"'{name}' {br} " +
+                       $"Guid: {guid} {br}" +
+					   $"{bitdepth} bit {br}" +
+					   $"{channels} ch. {br}" +
+					   $"{size} {br}" +
+					   $"<{pointer}>";
+			}
+			return $"'{this.Name}' {br} " +
+				   $"Bitdepth: {this.Bitdepth} bit {br}" +
+				   $"Channels: {this.Channels} {br}" +
+				   $"Size: {this.SizeInBytes / 1024.0 / 1024.0:F2} MB {br}" +
+				   $"Pointer: <{this.Pointer:X}>";
+		}
+	}
 }

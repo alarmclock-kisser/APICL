@@ -1,27 +1,27 @@
 ﻿@using Radzen
 @using Radzen.Blazor
 @using System.Collections.Concurrent
-@using System.Diagnostics
 @inject IJSRuntime JSRuntime
 @inherits LayoutComponentBase
 
-<CascadingValue Value="@AddLogEntryMethod">
+<CascadingValue Value="@LogEntryHandler" Name="AddLogEntry">
+
     <RadzenLayout>
-        <!-- Kopfbereich -->
+        <!-- Kopfbereich (unverändert) -->
         <HeadContent>
             <link rel="stylesheet" href="~/site.css" />
             <link rel="icon" href="~/../APICL.favicon.ico" type="image/x-icon" />
         </HeadContent>
 
-        <!-- Header -->
+        <!-- Header (unverändert) -->
         <RadzenHeader>
             <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn><RadzenSidebarToggle Click="@(args => SidebarToggleClick())" /></RadzenColumn>
+                <RadzenColumn><RadzenSidebarToggle Click="@SidebarToggleClick" /></RadzenColumn>
                 <RadzenColumn><div style="font-size: 24px; font-weight: bold;">APICL WebApp</div></RadzenColumn>
             </RadzenRow>
         </RadzenHeader>
 
-        <!-- Sidebar -->
+        <!-- Sidebar (unverändert) -->
         <RadzenSidebar @bind-Expanded="@sidebarExpanded">
             <RadzenPanelMenu>
                 <RadzenPanelMenuItem Text="Home" Path="" Icon="home" Match="NavLinkMatch.All" />
@@ -58,29 +58,22 @@
 </CascadingValue>
 
 @code {
-
-    public Func<string, bool, Task> AddLogEntryMethod => AddLogEntry;
-    private string LogPrefix { get; set; } = "[GLOBAL] ";
-    private Stopwatch stopwatch = new Stopwatch();
-    private bool logMinimal { get; set; } = true;
-    private bool logElapsed { get; set; } = true;
-
+    // Zustandsvariablen
     bool sidebarExpanded = false;
     bool darkModeEnabled = false;
     private ConcurrentDictionary<long, string> logEntries = [];
     private ElementReference logContainer;
     private int maxLogEntries = 100;
 
+    // WICHTIG: Parameter und Methode umbenannt
+    [CascadingParameter(Name = "AddLogEntry")]
+    public Func<string, bool, Task> LogEntryHandler { get; set; } = null!;
 
-
-    public async Task<int> AddLogEntry(string message = "", bool overwriteLastEntry = false)
+    // Methode zum Hinzufügen von Log-Einträgen
+    public async Task AddLogEntry(string message = "", bool overwriteLastEntry = false)
     {
         if (!string.IsNullOrWhiteSpace(message) && !".!?".Contains(message.Trim().Last()))
-        {
             message += ".";
-        }
-
-        stopwatch.Restart();
 
         try
         {
@@ -101,36 +94,15 @@
         }
         finally
         {
-            stopwatch.Stop();
-
-            if (overwriteLastEntry && logElapsed)
-            {
-                // If overwritten & allowed, add elapsed ms to the last entry
-                if (logEntries.Any())
-                {
-                    var lastKey = logEntries.Keys.Last();
-                    if (logEntries.TryGetValue(lastKey, out var lastEntry))
-                    {
-                        logEntries[lastKey] = $"{lastEntry} (Elapsed: {stopwatch.ElapsedMilliseconds} ms)";
-                    }
-                }
-            }
-
             await InvokeAsync(StateHasChanged);
         }
-
-        return (int)stopwatch.ElapsedMilliseconds;
     }
 
-    async Task ToggleDarkMode(bool log = true)
+    // UI-Events
+    void SidebarToggleClick() => sidebarExpanded = !sidebarExpanded;
+
+    async Task ToggleDarkMode()
     {
-        darkModeEnabled = !darkModeEnabled;
-
-        if (log || logMinimal)
-        {
-            await AddLogEntry($"Dark mode {(darkModeEnabled ? "enabled" : "disabled")}.");
-        }
-
         try
         {
             await JSRuntime.InvokeVoidAsync(
@@ -141,38 +113,13 @@
         }
         catch (Exception ex)
         {
-            await AddLogEntry($"Error toggling dark mode: {ex.Message}", true);
+            Console.WriteLine($"DarkMode error: {ex.Message}");
         }
-    }
-
-    async Task SidebarToggleClick(bool log = false)
-    {
-        sidebarExpanded = !sidebarExpanded;
-
-        if (log || logMinimal)
-        {
-            await AddLogEntry($"Sidebar {(sidebarExpanded ? "expanded" : "collapsed")}").ConfigureAwait(false);
-        }
-        
-        StateHasChanged();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && logMinimal)
-        {
-            await AddLogEntry("Initial rendering started...").ConfigureAwait(false);
-        }
-        if (logEntries.Any())
-        {
-            await JSRuntime.InvokeVoidAsync("scrollToBottom", "logContainer");
-        }
-
-        if (firstRender && logMinimal)
-        {
-            await AddLogEntry("Initial rendering completed!", true).ConfigureAwait(false);
-            await AddLogEntry("Dark mode is " + (darkModeEnabled ? "enabled" : "disabled")).ConfigureAwait(false);
-            await AddLogEntry("Sidebar is " + (sidebarExpanded ? "expanded" : "collapsed")).ConfigureAwait(false);
-        }
+        if (firstRender) await AddLogEntry("First render");
+        if (logEntries.Any()) await JSRuntime.InvokeVoidAsync("scrollToBottom", "logContainer");
     }
 }
