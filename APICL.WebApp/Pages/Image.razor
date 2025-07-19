@@ -28,17 +28,22 @@
 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.1rem" class="rz-p-sm-12" Reverse="false">
     <RadzenListBox TValue="Guid" Data="@imageInfos" TextProperty="Entry" ValueProperty="Guid"
                    @bind-Value="@selectedImageGuid" Change="@LoadImage"
-                   Style="width: 100%; max-width: 600px; height: 200px;" Name="ListBoxImageObjects" Placeholder="-- Select Image Object --">
+                   Style="width: 100%; height: 25%;" Name="ListBoxImageObjects" Placeholder="-- Select Image Object --">
     </RadzenListBox>
     <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.1rem" class="rz-p-sm-12" Reverse="false">
-        <RadzenButton Name="ButtonUploadImage" Style="width: 120px; font-family: Arial; background-color: #e0e0e0" Text="Upload" ButtonType="Radzen.ButtonType.Button" ButtonStyle="Radzen.ButtonStyle.Light" Size="Radzen.ButtonSize.Medium" Variant="Radzen.Variant.Filled">
+        <RadzenButton Name="ButtonUploadImage" Style="width: 100%; font-family: Arial; background-color: #e0e0e0" Text="Upload"
+                ButtonType="Radzen.ButtonType.Button" ButtonStyle="Radzen.ButtonStyle.Light" Size="Radzen.ButtonSize.Medium" Variant="Radzen.Variant.Filled">
             <InputFile id="imageUpload" OnChange="OnImageUpload" accept="image/*" class="rz-mb-2" />
         </RadzenButton>
-        <RadzenButton Name="ButtonDownloadSelectedImage" Style="width: 120px; font-family: Arial; background-color: #e0e0e0" Text="Download" ButtonType="Radzen.ButtonType.Button" ButtonStyle="Radzen.ButtonStyle.Light" Size="Radzen.ButtonSize.Medium" Variant="Radzen.Variant.Filled"
-                      Click="@OnDownloadSelected"></RadzenButton>
-        <RadzenButton Name="ButtonRemoveImageObj" Style="width: 120px; font-family: Arial; background-color: #e0e0e0" Text="Remove" ButtonType="Radzen.ButtonType.Button" ButtonStyle="Radzen.ButtonStyle.Light" Size="Radzen.ButtonSize.Medium"
-                      Variant="Radzen.Variant.Filled"
-                      Click="@OnRemoveImageObj"></RadzenButton>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.1rem" class="rz-p-sm-12" Reverse="false">
+            <RadzenButton Name="ButtonDownloadSelectedImage" Style="width: auto; font-family: Arial; background-color: #e0e0e0" Text="Download"
+                          ButtonType="Radzen.ButtonType.Button" ButtonStyle="Radzen.ButtonStyle.Light" Size="Radzen.ButtonSize.Medium" Variant="Radzen.Variant.Filled"
+                          Click="@OnDownloadSelected" Disabled="@(selectedImageGuid == Guid.Empty)" ></RadzenButton>
+            <RadzenDropDown TValue="string" Name="DropDownFormat" Style="width: auto" Data="@availableFormats" @bind-Value="@selectedFormat"></RadzenDropDown>
+        </RadzenStack>
+        <RadzenButton Name="ButtonRemoveImageObj" Style="width: 100%; font-family: Arial" Text="Remove" ButtonType="Radzen.ButtonType.Button"
+                      ButtonStyle="Radzen.ButtonStyle.Danger" Size="Radzen.ButtonSize.Medium" Variant="Radzen.Variant.Filled" Click="@OnRemoveImageObj"
+                      Disabled="@(selectedImageGuid == Guid.Empty)" ></RadzenButton>
     </RadzenStack>
 </RadzenStack>
 
@@ -51,6 +56,9 @@
     private IEnumerable<ImageObjInfo> imageInfos = [];
 
     private string imageBase64 = string.Empty;
+
+    private static IEnumerable<string> availableFormats = ["bmp", "png", "jpg"];
+    private string selectedFormat = "bmp";
 
     private Guid selectedImageGuid = Guid.Empty;
     private ImageObjInfo selectedImageInfo => imageInfos.FirstOrDefault(info => info.Guid == selectedImageGuid) ?? new ImageObjInfo(null);
@@ -170,10 +178,10 @@
             try
             {
                 // Direkt die URL zum API-Endpunkt aufrufen
-                string downloadUrl = $"{ApiConfig.BaseUrl}/api/image/images/download/{selectedImageInfo.Guid}";
+                string downloadUrl = $"{ApiConfig.BaseUrl}/api/image/images/{selectedImageInfo.Guid}/download/{selectedFormat}";
 
                 // Rufe die JavaScript-Funktion auf, um den Download zu starten
-                await JSRuntime.InvokeVoidAsync("downloadFileFromUrl", downloadUrl, $"{fileName}.bmp");
+                await JSRuntime.InvokeVoidAsync("downloadFileFromUrl", downloadUrl, $"{fileName}.{selectedFormat}");
 
                 // Füge diese Zeile hinzu:
                 await AddLog($"Got Download-URL: {downloadUrl}");

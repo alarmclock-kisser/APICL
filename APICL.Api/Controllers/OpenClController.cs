@@ -300,9 +300,12 @@ namespace APICL.Api.Controllers
         }
 
         [HttpGet("executeTimestretch/{guid}/{kernel}/{version}/{factor}/{chunkSize}/{overlap}/{copyGuid}/{allowTempSession}")]
-
-        public async Task<ActionResult<AudioObjInfo>> ExecuteTimestretch(Guid guid, string kernel = "timestretch_double",
-            string version = "03", double factor = 0.8d, int chunkSize = 16384, float overlap = 0.5f,
+        [ProducesResponseType(typeof(AudioObjInfo), 201)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+		public async Task<ActionResult<AudioObjInfo>> ExecuteTimestretch(Guid guid, string kernel = "timestretch_double",
+            string version = "03", double factor = 0.8, int chunkSize = 16384, float overlap = 0.5f,
             bool copyGuid = true, bool allowTempSession = true)
         {
             // Find audio obj

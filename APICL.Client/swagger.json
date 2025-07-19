@@ -590,7 +590,7 @@
         }
       }
     },
-    "/api/Image/images/{guid}/download": {
+    "/api/Image/images/{guid}/download/{format}": {
       "get": {
         "tags": [
           "Image"
@@ -607,6 +607,13 @@
             "required": true,
             "type": "string",
             "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "format",
+            "required": true,
+            "type": "string",
+            "default": "bmp"
           }
         ],
         "responses": {
@@ -1123,11 +1130,26 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
+          "201": {
+            "description": "Created",
             "schema": {
               "$ref": "#/definitions/AudioObjInfo"
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -1171,8 +1193,7 @@
       "properties": {
         "guid": {
           "format": "uuid",
-          "type": "string",
-          "readOnly": true
+          "type": "string"
         },
         "filepath": {
           "type": "string"
@@ -1193,15 +1214,11 @@
           "type": "integer"
         },
         "length": {
-          "format": "int64",
+          "format": "int32",
           "type": "integer"
         },
-        "pointer": {
-          "format": "int64",
-          "type": "integer"
-        },
-        "onHost": {
-          "type": "boolean"
+        "memoryLocation": {
+          "type": "string"
         },
         "chunkSize": {
           "format": "int32",
@@ -1214,24 +1231,15 @@
         "form": {
           "type": "string"
         },
-        "stretchFactor": {
-          "format": "double",
-          "type": "number"
-        },
         "bpm": {
           "format": "float",
           "type": "number"
         },
-        "playing": {
-          "type": "boolean"
+        "playingString": {
+          "type": "string"
         },
-        "sizeInBytes": {
-          "format": "int64",
-          "type": "integer"
-        },
-        "duration": {
-          "format": "double",
-          "type": "number"
+        "sizeString": {
+          "type": "string"
         },
         "durationTimeSpan": {
           "format": "date-span",
@@ -1248,6 +1256,9 @@
           "type": "string"
         },
         "entry": {
+          "type": "string"
+        },
+        "errorInfo": {
           "type": "string"
         }
       },
@@ -1321,6 +1332,9 @@
           "type": "string"
         },
         "lastLoadingTime": {
+          "type": "string"
+        },
+        "errorInfo": {
           "type": "string"
         }
       },

@@ -1,6 +1,7 @@
 ﻿using APICL.Shared;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -266,18 +267,27 @@ namespace APICL.Client
 
         public async Task<AudioObjInfo> UploadAudio(FileParameter file, bool copyGuid = false)
         {
-            var task = this.internalClient.UploadAsync(copyGuid, file);
+            Stopwatch sw = Stopwatch.StartNew();
+            var info = new AudioObjInfo(null);
+			var task = this.internalClient.UploadAsync(copyGuid, file);
 
             try
             {
-                return await task;
+                info = await task;
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
                 return new AudioObjInfo(null);
             }
-        }
+            finally
+            {
+                sw.Stop();
+                info.LastLoadingTimeSpan = sw.Elapsed;
+			}
+
+            return info;
+		}
 
         public async Task<AudioData> GetBase64Waveform(Guid guid)
         {
@@ -300,38 +310,47 @@ namespace APICL.Client
             int width = 480, int height = 360, double zoom = 1.0, double x = 0.0, double y = 0.0, int coeff = 8,
             int r = 0, int g = 0, int b = 0, bool copyGuid = true, bool allowTempSession = true)
         {
-            var kernelArgs = new KernelArguments(null, this.GetType().GetMethod("ExecuteMandelbrot"));
+			var task = this.internalClient.ExecuteMandelbrotAsync(kernel, version, width, height, zoom, x, y, coeff, r, g, b, copyGuid, allowTempSession);
+            var info = new ImageObjInfo(null);
 
-            var task = this.internalClient.ExecuteMandelbrotAsync(kernel, version, width, height, zoom, x, y, coeff, r, g, b, copyGuid, allowTempSession);
-
-            try
+			try
             {
-                return await task;
-            }
+                info = await task;
+			}
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                return new ImageObjInfo(null);
-            }
+				info.ErrorInfo = $"'{ex.Message}' ({ex.InnerException?.Message})";
+				Console.WriteLine(ex);
+			}
+
+            return info;
         }
 
         public async Task<AudioObjInfo> ExecuteTimestretch(Guid guid, string kernel = "timestretch_double",
-            string version = "03", double factor = 0.8d, int chunkSize = 16384, float overlap = 0.5f,
+            string version = "03", double factor = 0.8, int chunkSize = 16384, float overlap = 0.5f,
             bool copyGuid = true, bool allowTempSession = true)
         {
-            var kernelArgs = new KernelArguments(null, this.GetType().GetMethod("ExecuteTimestretch"));
+            Stopwatch sw = Stopwatch.StartNew();
 
-            var task = this.internalClient.ExecuteTimestretchAsync(guid, kernel, version, factor, chunkSize, overlap, copyGuid, allowTempSession);
+			var info = await this.GetAudioInfo(guid);
+			var task = this.internalClient.ExecuteTimestretchAsync(info.Guid, kernel, version, factor, chunkSize, overlap, copyGuid, allowTempSession);
 
-            try
+			try
             {
-                return await task;
-            }
+                info = await task;
+                info.LastProcessingTimeSpan = sw.Elapsed;
+			}
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                return new AudioObjInfo(null);
+                info.ErrorInfo = $"'{ex.Message}' ({ex.InnerException?.Message})";
+				Console.WriteLine(ex);
             }
+            finally
+            {
+                sw.Stop();
+            }
+
+            return info;
         }
 
 

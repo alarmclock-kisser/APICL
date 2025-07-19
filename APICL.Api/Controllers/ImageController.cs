@@ -229,16 +229,15 @@ namespace APICL.Api.Controllers
 			}
 		}
 
-		[HttpGet("images/{guid}/download")]
+		[HttpGet("images/{guid}/download/{format}")]
 		[ProducesResponseType(200)]
 		[ProducesResponseType(204)]
 		[ProducesResponseType(404)]
 		[ProducesResponseType(400)]
 		[ProducesResponseType(500)]
-		public async Task<IActionResult> DownloadImage(Guid guid)
+		public async Task<IActionResult> DownloadImage(Guid guid, string format = "bmp")
 		{
 			string? filePath = null;
-			string? format = null;
 			byte[] fileBytes = [];
 
 			try
@@ -258,8 +257,7 @@ namespace APICL.Api.Controllers
 				}
 
 				// Download image as file
-				format = obj.Filepath?.Split('.').Last() ?? "bmp";
-				filePath = await obj.Export();
+				filePath = await obj.Export("", format);
 				if (string.IsNullOrEmpty(filePath))
 				{
 					return this.BadRequest("Failed to export image to file.");

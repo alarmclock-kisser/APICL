@@ -194,7 +194,7 @@ namespace APICL.Core
 			GC.SuppressFinalize(this);
 		}
 
-		public async Task<string> Export(string filePath = "", IImageFormat? format = null)
+		public async Task<string> Export(string filePath = "", string format = "bmp")
 		{
 			if (this.Img == null)
 			{
@@ -202,12 +202,23 @@ namespace APICL.Core
 			}
 
 			// Fallback to Bmp
-			format ??= BmpFormat.Instance;
-			string extension = format.FileExtensions.FirstOrDefault()?.Trim('.') ?? "bmp";
-			if (extension.ToLower() == "bmp")
+			IImageEncoder encoder = format.ToLower() switch
+				{
+					"png" => new SixLabors.ImageSharp.Formats.Png.PngEncoder(),
+					"jpeg" or "jpg" => new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder(),
+					"gif" => new SixLabors.ImageSharp.Formats.Gif.GifEncoder(),
+					// Default to BMP if no valid format is provided + set format to bmp
+					_ => new SixLabors.ImageSharp.Formats.Bmp.BmpEncoder()
+				};
+
+			// Determine file extension based on format
+			string extension = format.ToLower() switch
 			{
-				format = BmpFormat.Instance;
-			}
+				"png" => "png",
+				"jpeg" or "jpg" => "jpg",
+				"gif" => "gif",
+				_ => "bmp"
+			};
 
 			if (string.IsNullOrEmpty(filePath))
 			{
@@ -217,20 +228,11 @@ namespace APICL.Core
 			try
 			{
 				// Clone img in a thread-safe manner
-				Image<Rgba32> clone = await Task.Run(() =>
-				{
-					lock (this.lockObj)
-					{
-						return this.Img.CloneAs<Rgba32>();
-					}
-				});
+				Image<Rgba32> clone = this.Img.CloneAs<Rgba32>();
 
 				// Use the clone in an async context
 				using (clone)
 				{
-					// Get encoder from the format
-					IImageEncoder encoder = Configuration.Default.ImageFormatsManager.GetEncoder(format);
-
 					// Create the directory if it doesn't exist
 					var directory = Path.GetDirectoryName(filePath);
 					if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))

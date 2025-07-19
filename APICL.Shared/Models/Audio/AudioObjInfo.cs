@@ -8,10 +8,10 @@ namespace APICL.Shared
         public Guid Guid { get; set; } = Guid.Empty;
         public string Filepath { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public int Samplerate { get; set; } = -1;
-        public int Bitdepth { get; set; } = -1;
-        public int Channels { get; set; } = -1;
-        public long Length = -1;
+        public int Samplerate { get; set; } = 0;
+        public int Bitdepth { get; set; } = 0;
+        public int Channels { get; set; } = 0;
+        public int Length { get; set; } = 0;
 
         public long Pointer = 0;
         public bool OnHost = false;
@@ -21,13 +21,13 @@ namespace APICL.Shared
         public int OverlapSize { get; set; } = 0;
         public string Form { get; set; } = "f";
         public double StretchFactor = 1.0;
-        public float Bpm = 0.0f;
+        public float Bpm { get; set; } = 0.0f;
         public bool Playing = false;
         public string PlayingString { get; set; } = "Stopped";
 
 		public long SizeInBytes = 0;
-        public float SizeInMegaBytes = 0;
-        public string SizeString { get; set; } = "0.00 MB";
+        public float SizeInMegaBytes => (float)(this.SizeInBytes / 1024.0 / 1024.0);
+		public string SizeString => $"{this.SizeInMegaBytes:F2} MB";
 		public double Duration = 0.0;
         public TimeSpan DurationTimeSpan => TimeSpan.FromSeconds(this.Duration);
         public string DurationString { get; set; } = TimeSpan.Zero.ToString("hh':'mm':'ss'.'fff");
@@ -40,9 +40,11 @@ namespace APICL.Shared
 
         public string Entry { get; set; } = string.Empty;
 
+        public string ErrorInfo { get; set; } = string.Empty;
 
 
-        public AudioObjInfo()
+
+		public AudioObjInfo()
         {
 			// Default constructor for serialization
 		}
@@ -61,7 +63,7 @@ namespace APICL.Shared
             this.Samplerate = obj.Samplerate;
             this.Bitdepth = obj.Bitdepth;
             this.Channels = obj.Channels;
-            this.Length = obj.Length;
+            this.Length = (int)obj.Length;
             this.Pointer = obj.Pointer;
             this.OnHost = obj.OnHost;
             this.ChunkSize = obj.ChunkSize;
@@ -85,17 +87,15 @@ namespace APICL.Shared
                 this.LastLoadingTime = this.LastLoadingTimeSpan.ToString("hh':'mm':'ss'.'fff");
             }
 
-            this.DurationString = this.DurationTimeSpan.ToString("hh':'mm':'ss'.'fff");
-
 			this.SizeInBytes = this.Length * (this.Bitdepth / 8) * this.Channels;
-            this.SizeInMegaBytes = (float)(this.SizeInBytes / 1024.0 / 1024.0);
-            this.SizeString = $"{this.SizeInMegaBytes:F2} MB";
+
             this.MemoryLocation = this.OnHost ? "Host" : "Device";
 
 			this.Duration = (this.Samplerate > 0 && this.Channels > 0) ? (double) this.Length / (this.Samplerate * this.Channels) : 0;
+			this.DurationString = this.DurationTimeSpan.ToString("hh':'mm':'ss'.'fff");
 
-            this.Entry = $"'{this.Name}' [{this.Bpm} BPM] - {this.Duration} sec.";
-        }
+			this.Entry = $"'{this.Filepath}' ({this.Guid})";
+		}
 
         public string ToString(int shorten = 0, bool singleLine = true)
         {
@@ -130,7 +130,7 @@ namespace APICL.Shared
                 return $"{playback} '{name}' {br} " +
                        $"({guid}) {br}" +
 					   $"[{bpm}] {br}" +
-                       $"{duration} sec. {br}" +
+                       $"{duration} {br}" +
                        $"{samplerate} Hz {br}" +
                        $"{bitdepth} bit {br}" +
                        $"{channels} {br}" +
@@ -139,9 +139,9 @@ namespace APICL.Shared
                        $"<{pointer}>";
 			}
             return $"{playback} '{this.Name}' {br} " +
-                   $"[{this.Bpm} BPM] {br}" +
+                   $"[{this.Bpm:F4} BPM] {br}" +
                    $"({this.Guid}) {br}" +
-				   $"{this.Duration} sec. {br}" +
+				   $"{this.DurationString} {br}" +
                    $"Samplerate: {this.Samplerate} Hz {br}" +
                    $"Bitdepth: {this.Bitdepth} bit {br}" +
                    $"Channels: {this.Channels} {br}" +

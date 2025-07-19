@@ -150,7 +150,7 @@ namespace APICL.Api.Controllers
 					return this.BadRequest("Failed to load audio from uploaded file.");
 				}
 
-				var info = this.audioCollection[obj.Guid];
+				var info = new AudioObjInfo(obj);
 
 				if (info == null || info.Guid == Guid.Empty)
 				{
