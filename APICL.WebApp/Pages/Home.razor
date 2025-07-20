@@ -26,7 +26,12 @@
     <RadzenDropDown Data=@openClDeviceInfos TextProperty="DeviceName" ValueProperty="DeviceId" @bind-Value=@selectedOpenClDeviceIndex
                     AllowClear="false" AllowFiltering="false" Style="width: 100%; max-width: 600px" Name="DropDownDevices" Placeholder="-- Select OpenCL Device --" FilterAsYouType="false" AllowSelectAll="false">
     </RadzenDropDown>
-    <RadzenButton Name="ButtonOpenClInitialize" Style="width: 120px; font-family: Arial; background-color: #e0e0e0" Text="Initialize" ButtonType="Radzen.ButtonType.Submit" ButtonStyle="Radzen.ButtonStyle.Light" Size="Radzen.ButtonSize.Medium" Variant="Radzen.Variant.Filled" Disabled="false" Click="@ButtonOpenClInitializeClick"></RadzenButton>
+    <RadzenButton Name="ButtonOpenClInitialize"
+                  Style="@buttonInitializeStyleString"
+                  Text="@buttonInitializeText"
+                  ButtonType="Radzen.ButtonType.Submit" ButtonStyle="Radzen.ButtonStyle.Light" Size="Radzen.ButtonSize.Medium" Variant="Radzen.Variant.Filled"
+                  Disabled="@(!openClDeviceInfos.Any())" Click="@ButtonOpenClInitializeClick">
+    </RadzenButton>
 </RadzenStack>
 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.1rem" class="rz-p-sm-12" Reverse="false">
     <RadzenText Text="OpenCL Service Status:" TextStyle="TextStyle.Subtitle1" />
@@ -46,7 +51,10 @@
     private IEnumerable<OpenClKernelInfo> openClKernelInfos = [];
     private IEnumerable<OpenClMemoryInfo> openClMemoryInfos = [];
 
-    
+    private string buttonInitializeColor = "#e0e0e0";
+    private string buttonInitializeStyleString => "width: 140px; font-family: Arial; background-color: " + buttonInitializeColor;
+    private string buttonInitializeText = "Initialize";
+
 
     private async Task AddLog(string message)
     {
@@ -121,21 +129,32 @@
     {
         if (selectedOpenClDeviceIndex == -1)
         {
+            buttonInitializeColor = "#e0e0e0";
             await AddLog("Please select a CL-Device to initialize.");
             StateHasChanged();
             return;
         }
-        
+
+        // Set color to white
+        buttonInitializeColor = "#D3D3D3";
+        buttonInitializeText = "Initializing...";
         await AddLog($"Started initializing CL-Device with ID {selectedOpenClDeviceIndex} ...");
         StateHasChanged();
 
         openClServiceInfo = await ApiClient.InitializeOpenCl(selectedOpenClDeviceIndex);
         if (openClServiceInfo.Initialized)
         {
+            // Light green
+            buttonInitializeColor = "#C1E1C1";
+            buttonInitializeText = "Initialized!";
             await AddLog($"OpenCL device initialized successfully: {openClServiceInfo.DeviceName} [{openClServiceInfo.DeviceId}]");
         }
         else
         {
+            // Light red
+            buttonInitializeColor = "#FFB6C1";
+            buttonInitializeText = "Error (!)";
+            selectedOpenClDeviceIndex = -1;
             await AddLog($"Failed to initialize OpenCL device [{selectedOpenClDeviceIndex}].");
         }
 

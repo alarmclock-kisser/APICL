@@ -462,7 +462,7 @@ namespace APICL.Core
 				// Initialize player with cancellation support
 				this.Player = new WaveOutEvent
 				{
-					Volume = initialVolume,
+					Volume = initialVolume ?? 1.0f,
 					DesiredLatency = 100 // Lower latency for better responsiveness
 				};
 

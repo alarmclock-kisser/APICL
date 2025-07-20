@@ -160,13 +160,6 @@
 
     async Task ToggleDarkMode(bool log = true)
     {
-        darkModeEnabled = !darkModeEnabled;
-
-        if (log || logMinimal)
-        {
-            await AddLogEntry($"Dark mode {(darkModeEnabled ? "enabled" : "disabled")}.");
-        }
-
         try
         {
             await JSRuntime.InvokeVoidAsync(
@@ -178,6 +171,13 @@
         catch (Exception ex)
         {
             await AddLogEntry($"Error toggling dark mode: {ex.Message}", true);
+        }
+        finally
+        {
+            if (log || logMinimal)
+            {
+                await AddLogEntry($"Dark mode {(darkModeEnabled ? "enabled" : "disabled")}.");
+            }
         }
     }
 

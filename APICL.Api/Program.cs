@@ -1,4 +1,5 @@
 using APICL.Core;
+using APICL.Core.CommonStaticMethods;
 using APICL.OpenCl;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -15,9 +16,9 @@ namespace APICL.Api
 			var builder = WebApplication.CreateBuilder(args);
 
 			bool isSwaggerEnabled = builder.Configuration.GetValue<bool>("SwaggerEndpoints");
-			int maxUploadSize = builder.Configuration.GetValue<int>("MaxUploadFileSizeMb") * 1_000_000;
-			bool saveMemory = builder.Configuration.GetValue<bool>("SaveMemory");
-			int spareWorkers = builder.Configuration.GetValue<int>("SpareWorkers");
+			int maxUploadSize = builder.Configuration.GetSection("UserPreferences").GetValue<int>("MaxUploadFileSizeMb") * 1_000_000;
+			bool saveMemory = builder.Configuration.GetSection("UserPreferences").GetValue<bool>("SaveMemory");
+			CommonStatics.SpareWorkers = builder.Configuration.GetSection("UserPreferences").GetValue<int>("SpareWorkers");
 
 			builder.Services.AddControllers();
 
