@@ -36,15 +36,45 @@ namespace APICL.Core
 
 		public AudioObj? this[Guid guid] => this._tracks.FirstOrDefault(t => t.Guid == guid);
 
+
+		// Options
+		public int DefaultPlaybackVolume { get; set; } = 100;
+		public int AnimationDelay { get; set; } = 1000 / 30;
+		public bool SaveMemory { get; set; } = false;
+		public string ImportPath { get; set; } = string.Empty;
+		public string ExportPath { get; set; } = string.Empty;
+
+
 		// --- Public Methods ---
 		public async Task<AudioObj> AddTrack(string filePath)
 		{
+			if (this.SaveMemory)
+			{
+				// Dispose every track to free memory
+				lock (this._tracks)
+				{
+					foreach (var t in this._tracks)
+					{
+						t.Dispose();
+					}
+					
+					this._tracks.Clear();
+				}
+				
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
+			}
+
 			if (!File.Exists(filePath))
 			{
 				throw new FileNotFoundException("Audio file not found", filePath);
 			}
 
-			AudioObj track = new(filePath);
+			AudioObj track = new AudioObj(filePath)
+			{
+				Volume = this.DefaultPlaybackVolume,
+				WaveformUpdateFrequency = this.AnimationDelay,
+			};
 			await track.LoadAudioFile().ConfigureAwait(false);
 
 			lock (this._tracks)

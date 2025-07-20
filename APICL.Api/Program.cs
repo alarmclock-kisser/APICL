@@ -15,6 +15,9 @@ namespace APICL.Api
 			var builder = WebApplication.CreateBuilder(args);
 
 			bool isSwaggerEnabled = builder.Configuration.GetValue<bool>("SwaggerEndpoints");
+			int maxUploadSize = builder.Configuration.GetValue<int>("MaxUploadFileSizeMb") * 1_000_000;
+			bool saveMemory = builder.Configuration.GetValue<bool>("SaveMemory");
+			int spareWorkers = builder.Configuration.GetValue<int>("SpareWorkers");
 
 			builder.Services.AddControllers();
 
@@ -30,9 +33,24 @@ namespace APICL.Api
 			});
 
 			// Add services to the container.
-			builder.Services.AddSingleton<OpenClService>();
-			builder.Services.AddSingleton<ImageCollection>();
-			builder.Services.AddSingleton<AudioCollection>();
+			builder.Services.AddSingleton<OpenClService>(new OpenClService
+			{
+				PreferredDeviceName = builder.Configuration.GetValue<string>("OpenClDevice") ?? string.Empty
+			});
+			builder.Services.AddSingleton<ImageCollection>(new ImageCollection
+			{
+				ImportPath = builder.Configuration.GetValue<string>("InitialDirImageImport") ?? string.Empty,
+				ExportPath = builder.Configuration.GetValue<string>("InitialDirImageExport") ?? string.Empty,
+				SaveMemory = saveMemory,
+			});
+			builder.Services.AddSingleton<AudioCollection>(new AudioCollection
+			{
+				ImportPath = builder.Configuration.GetValue<string>("InitialDirAudioImport") ?? string.Empty,
+				ExportPath = builder.Configuration.GetValue<string>("InitialDirAudioExport") ?? string.Empty,
+				DefaultPlaybackVolume = builder.Configuration.GetValue<int>("PlaybackVolume", 100),
+				AnimationDelay = 1000 / builder.Configuration.GetValue<int>("AnimationFps", 30),
+				SaveMemory = saveMemory,
+			});
 			builder.Services.InjectClipboard();
 
 			// Swagger/OpenAPI
@@ -61,20 +79,20 @@ namespace APICL.Api
 				});
 			}
 
-				// Request Body Size Limits
-				builder.WebHost.ConfigureKestrel(options =>
-				{
-					options.Limits.MaxRequestBodySize = 500_000_000;
-				});
+			// Request Body Size Limits
+			builder.WebHost.ConfigureKestrel(options =>
+			{
+				options.Limits.MaxRequestBodySize = maxUploadSize;
+			});
 
 			builder.Services.Configure<IISServerOptions>(options =>
 			{
-				options.MaxRequestBodySize = 500_000_000;
+				options.MaxRequestBodySize = maxUploadSize;
 			});
 
 			builder.Services.Configure<FormOptions>(options =>
 			{
-				options.MultipartBodyLengthLimit = 500_000_000;
+				options.MultipartBodyLengthLimit = maxUploadSize;
 			});
 
 			// Logging

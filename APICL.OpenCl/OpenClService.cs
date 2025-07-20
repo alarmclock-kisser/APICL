@@ -44,6 +44,9 @@ namespace APICL.OpenCl
 		public OpenClKernelExecutioner? KernelExecutioner { get; private set; }
 
 
+		// Options
+		public string PreferredDeviceName { get; set; } = string.Empty;
+
 
 		// Dispose
 		public void Dispose(bool silent = false)
@@ -802,6 +805,11 @@ namespace APICL.OpenCl
             this.OnChange?.Invoke();
 		}
 
+		public void Initialize(string deviceName, bool silent = false)
+		{
+			// Find index by name or preferred name
+
+		}
 
 
 		// Accessible methods

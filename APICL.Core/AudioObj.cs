@@ -35,6 +35,7 @@ namespace APICL.Core
 
 		public WaveOutEvent Player { get; set; } = new WaveOutEvent();
 		public bool Playing => this.Player.PlaybackState == PlaybackState.Playing;
+		public int Volume { get; set; } = 100;
 		public long SizeInBytes = 0;
 		public double Duration => (this.Samplerate > 0 && this.Channels > 0) ? (double) this.Length / (this.Samplerate * this.Channels) : 0;
 
@@ -444,8 +445,10 @@ namespace APICL.Core
 
 		public async Task Play(CancellationToken cancellationToken,
 						  Action? onPlaybackStopped = null,
-						  float initialVolume = 1.0f)
+						  float? initialVolume = null)
 		{
+			initialVolume ??= this.Volume / 100f;
+
 			// Stop any existing playback and cleanup
 			this.WaveformUpdateTimer.Stop();
 			this.Player?.Stop();

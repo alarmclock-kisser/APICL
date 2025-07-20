@@ -5,7 +5,13 @@ namespace APICL.Core
 {
     public class ImageCollection : IDisposable
     {
-        private readonly ConcurrentDictionary<Guid, ImageObj> images = [];
+		// Options
+        public string ImportPath { get; set; } = string.Empty;
+        public string ExportPath { get; set; } = string.Empty;
+        public bool SaveMemory { get; set; } = false;
+
+
+		private readonly ConcurrentDictionary<Guid, ImageObj> images = [];
         private readonly object lockObj = new();
 
         public IReadOnlyCollection<ImageObj> Images => this.images.Values.ToList();
@@ -43,6 +49,20 @@ namespace APICL.Core
 
         public bool Add(ImageObj imgObj)
         {
+			if (this.SaveMemory)
+            {
+                // Dispose every image
+                lock (this.lockObj)
+                {
+                    foreach (var i in this.images.Values)
+                    {
+                        i.Dispose();
+                    }
+                   
+                    this.images.Clear();
+				}
+			}
+			
             return this.images.TryAdd(imgObj.Guid, imgObj);
         }
 
@@ -170,7 +190,16 @@ namespace APICL.Core
             return imgObj;
 		}
 
+        public async Task<string?> ExportImage(Guid guid, string? exportPath = null, string format = "png")
+        {
+            exportPath ??= this.ExportPath;
+            ImageObj? obj = this[guid];
+            if (obj != null)
+            {
+                return await obj.Export(exportPath, format);
+            }
 
-
-    }
+            return null;
+		}
+	}
 }
