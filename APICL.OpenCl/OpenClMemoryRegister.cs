@@ -10,11 +10,11 @@ namespace APICL.OpenCl
 		private CLDevice Device;
 		private CLPlatform Platform;
 
-
-		public float MemoryPercentage => this.GetMemoryTotal() / this.GetMemoryUsed();
+		// Calculate percentage if not dividing by 0
+		public float MemoryPercentage => this.GetMemoryTotal() > 0 ? (float) (this.GetMemoryUsed() / this.GetMemoryTotal() * 100f) : 0f;
 		public IEnumerable<string> MemoryStrings
 		{
-			get => [this.GetMemoryTotal().ToString(), this.GetMemoryUsed().ToString(), this.GetMemoryFree().ToString(),];
+			get => [this.GetMemoryTotal().ToString(), this.GetMemoryUsed().ToString(), this.GetMemoryFree().ToString()];
 		}
 
 
