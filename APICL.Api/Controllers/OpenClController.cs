@@ -20,7 +20,15 @@ namespace APICL.Api.Controllers
             Task.Run(() => new OpenClServiceInfo(this.openClService));
 
         private Task<OpenClUsageInfo> usage =>
-            Task.Run(() => new OpenClUsageInfo(this.openClService.MemoryRegister));
+            Task.Run(() =>
+            {
+                if (this.openClService.MemoryRegister == null)
+                {
+                    return new OpenClUsageInfo(null);
+                }
+
+                return new OpenClUsageInfo(this.openClService.MemoryRegister.MemoryStrings.ElementAt(0), this.openClService.MemoryRegister.MemoryStrings.ElementAt(1), this.openClService.MemoryRegister.MemoryStrings.ElementAt(2), this.openClService.MemoryRegister.MemoryPercentage);
+            });
 
         public bool FlagReadable { get; set; } = false;
 

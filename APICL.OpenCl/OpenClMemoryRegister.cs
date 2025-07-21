@@ -11,6 +11,11 @@ namespace APICL.OpenCl
 		private CLPlatform Platform;
 
 
+		public float MemoryPercentage => this.GetMemoryTotal() / this.GetMemoryUsed();
+		public IEnumerable<string> MemoryStrings
+		{
+			get => [this.GetMemoryTotal().ToString(), this.GetMemoryUsed().ToString(), this.GetMemoryFree().ToString(),];
+		}
 
 
 
