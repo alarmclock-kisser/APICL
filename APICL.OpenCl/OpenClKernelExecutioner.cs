@@ -16,7 +16,8 @@ namespace APICL.OpenCl
 		private OpenClKernelCompiler Compiler;
 
 
-
+		public CLResultCode LastResultCode { get; private set; } = CLResultCode.Success;
+		public string LastResultMessage => this.LastResultCode.ToString();
 
 
 
@@ -127,21 +128,21 @@ namespace APICL.OpenCl
 
 
 			// Set static args
-			CLResultCode error = this.SetKernelArgSafe(2, (int) inputBuffers.IndexLength);
-			if (error != CLResultCode.Success)
+			this.LastResultCode = this.SetKernelArgSafe(2, (int) inputBuffers.IndexLength);
+			if (this.LastResultCode != CLResultCode.Success)
 			{
 				if (log)
 				{
-					this.Log("Failed to set kernel argument for chunk size: " + error, "", 2);
+					this.Log("Failed to set kernel argument for chunk size: " + this.LastResultCode, "", 2);
 				}
 				return pointer;
 			}
-			error = this.SetKernelArgSafe(3, overlapSize);
-			if (error != CLResultCode.Success)
+			this.LastResultCode = this.SetKernelArgSafe(3, overlapSize);
+			if (this.LastResultCode != CLResultCode.Success)
 			{
 				if (log)
 				{
-					this.Log("Failed to set kernel argument for overlap size: " + error, "", 2);
+					this.Log("Failed to set kernel argument for overlap size: " + this.LastResultCode, "", 2);
 				}
 				return pointer;
 			}
@@ -155,35 +156,35 @@ namespace APICL.OpenCl
 			// Loop through input buffers
 			for (int i = 0; i < inputBuffers.Count; i++)
 			{
-				error = this.SetKernelArgSafe(0, inputBuffers.Buffers[i]);
-				if (error != CLResultCode.Success)
+				this.LastResultCode = this.SetKernelArgSafe(0, inputBuffers.Buffers[i]);
+				if (this.LastResultCode != CLResultCode.Success)
 				{
 					if (log)
 					{
-						this.Log($"Failed to set kernel argument for input buffer {i}: {error}", "", 2);
+						this.Log($"Failed to set kernel argument for input buffer {i}: {this.LastResultCode}", "", 2);
 					}
 					return pointer;
 				}
-				error = this.SetKernelArgSafe(1, outputBuffers.Buffers[i]);
-				if (error != CLResultCode.Success)
+				this.LastResultCode = this.SetKernelArgSafe(1, outputBuffers.Buffers[i]);
+				if (this.LastResultCode != CLResultCode.Success)
 				{
 					if (log)
 					{
-						this.Log($"Failed to set kernel argument for output buffer {i}: {error}", "", 2);
+						this.Log($"Failed to set kernel argument for output buffer {i}: {this.LastResultCode}", "", 2);
 					}
 					return pointer;
 				}
 
 				// Execute kernel
-				error = CL.EnqueueNDRangeKernel(this.Queue, this.Kernel.Value, 1, null, [(UIntPtr) globalWorkSize], [(UIntPtr) localWorkSize], 0, null, out CLEvent evt);
+				this.LastResultCode = CL.EnqueueNDRangeKernel(this.Queue, this.Kernel.Value, 1, null, [(UIntPtr) globalWorkSize], [(UIntPtr) localWorkSize], 0, null, out CLEvent evt);
 
 				// Wait for completion
-				error = CL.WaitForEvents(1, [evt]);
-				if (error != CLResultCode.Success)
+				this.LastResultCode = CL.WaitForEvents(1, [evt]);
+				if (this.LastResultCode != CLResultCode.Success)
 				{
 					if (log)
 					{
-						this.Log($"Wait failed for buffer {i}: " + error, "", 2);
+						this.Log($"Wait failed for buffer {i}: " + this.LastResultCode, "", 2);
 					}
 				}
 
@@ -363,15 +364,15 @@ namespace APICL.OpenCl
 				}
 
 				// Set kernel arguments
-				CLResultCode error = CLResultCode.Success;
+				this.LastResultCode = CLResultCode.Success;
 				for (uint j = 0; j < arguments.Count; j++)
 				{
-					error = this.SetKernelArgSafe(j, arguments[(int) j]);
-					if (error != CLResultCode.Success)
+					this.LastResultCode = this.SetKernelArgSafe(j, arguments[(int) j]);
+					if (this.LastResultCode != CLResultCode.Success)
 					{
 						if (log)
 						{
-							this.Log($"Failed to set kernel argument {j} for buffer {i}: " + error, "", 2);
+							this.Log($"Failed to set kernel argument {j} for buffer {i}: " + this.LastResultCode, "", 2);
 						}
 						return IntPtr.Zero;
 					}
@@ -391,33 +392,33 @@ namespace APICL.OpenCl
 				}
 
 				// Execute kernel
-				error = CL.EnqueueNDRangeKernel(this.Queue, this.Kernel.Value, 1, null, [(UIntPtr) globalWorkSize], [(UIntPtr) localWorkSize], 0, null, out CLEvent evt);
-				if (error != CLResultCode.Success)
+				this.LastResultCode = CL.EnqueueNDRangeKernel(this.Queue, this.Kernel.Value, 1, null, [(UIntPtr) globalWorkSize], [(UIntPtr) localWorkSize], 0, null, out CLEvent evt);
+				if (this.LastResultCode != CLResultCode.Success)
 				{
 					if (log)
 					{
-						this.Log($"Failed to enqueue kernel for buffer {i}: " + error, "", 2);
+						this.Log($"Failed to enqueue kernel for buffer {i}: " + this.LastResultCode, "", 2);
 					}
 					return IntPtr.Zero;
 				}
 
 				// Wait for completion
-				error = CL.WaitForEvents(1, [evt]);
-				if (error != CLResultCode.Success)
+				this.LastResultCode = CL.WaitForEvents(1, [evt]);
+				if (this.LastResultCode != CLResultCode.Success)
 				{
 					if (log)
 					{
-						this.Log($"Wait failed for buffer {i}: " + error, "", 2);
+						this.Log($"Wait failed for buffer {i}: " + this.LastResultCode, "", 2);
 					}
 				}
 
 				// Release event
-				error = CL.ReleaseEvent(evt);
-				if (error != CLResultCode.Success)
+				this.LastResultCode = CL.ReleaseEvent(evt);
+				if (this.LastResultCode != CLResultCode.Success)
 				{
 					if (log)
 					{
-						this.Log($"Failed to release event for buffer {i}: " + error, "", 2);
+						this.Log($"Failed to release event for buffer {i}: " + this.LastResultCode, "", 2);
 					}
 				}
 			}
@@ -527,7 +528,7 @@ namespace APICL.OpenCl
 				{
 					if (logSuccess)
 					{
-						this.Log("Error allocating output buffer", "", 2);
+						this.Log("this.LastResultCode allocating output buffer", "", 2);
 					}
 					return pointer;
 				}
@@ -547,7 +548,7 @@ namespace APICL.OpenCl
 				CLResultCode err = this.SetKernelArgSafe((uint) i, arguments[i]);
 				if (err != CLResultCode.Success)
 				{
-					this.Log("Error setting kernel argument " + i + ": " + err.ToString(), arguments[i].ToString() ?? "");
+					this.Log("this.LastResultCode setting kernel argument " + i + ": " + err.ToString(), arguments[i].ToString() ?? "");
 					return pointer;
 				}
 			}
@@ -562,7 +563,7 @@ namespace APICL.OpenCl
 			}
 
 			// Exec
-			CLResultCode error = CL.EnqueueNDRangeKernel(
+			this.LastResultCode = CL.EnqueueNDRangeKernel(
 				this.Queue,
 				this.Kernel.Value,
 				workDim,          // 1D oder 2D
@@ -571,25 +572,25 @@ namespace APICL.OpenCl
 				null,             // Lokale Work-Size (automatisch)
 				0, null, out CLEvent evt
 			);
-			if (error != CLResultCode.Success)
+			if (this.LastResultCode != CLResultCode.Success)
 			{
-				this.Log("Error executing kernel: " + error.ToString(), "", 2);
+				this.Log("this.LastResultCode executing kernel: " + this.LastResultCode.ToString(), "", 2);
 				return pointer;
 			}
 
 			// Wait for kernel to finish
-			error = CL.WaitForEvents(1, [evt]);
-			if (error != CLResultCode.Success)
+			this.LastResultCode = CL.WaitForEvents(1, [evt]);
+			if (this.LastResultCode != CLResultCode.Success)
 			{
-				this.Log("Error waiting for kernel to finish: " + error.ToString(), "", 2);
+				this.Log("this.LastResultCode waiting for kernel to finish: " + this.LastResultCode.ToString(), "", 2);
 				return pointer;
 			}
 
 			// Release event
-			error = CL.ReleaseEvent(evt);
-			if (error != CLResultCode.Success)
+			this.LastResultCode = CL.ReleaseEvent(evt);
+			if (this.LastResultCode != CLResultCode.Success)
 			{
-				this.Log("Error releasing event: " + error.ToString(), "", 2);
+				this.Log("this.LastResultCode releasing event: " + this.LastResultCode.ToString(), "", 2);
 				return pointer;
 			}
 
@@ -1030,7 +1031,7 @@ namespace APICL.OpenCl
 			}
 			catch (Exception ex)
 			{
-				this.Log($"Error in {FUNCTION_NAME}: {ex.Message}", ex.StackTrace ?? "", 3);
+				this.Log($"this.LastResultCode in {FUNCTION_NAME}: {ex.Message}", ex.StackTrace ?? "", 3);
 				return FALLBACK_SIZE;
 			}
 		}

@@ -32,7 +32,16 @@ namespace APICL.Api.Controllers
 
         public bool FlagReadable { get; set; } = false;
 
-        public OpenClController(OpenClService openClService, ImageCollection imageCollection, AudioCollection audioCollection, IClipboard clipboard)
+        public string LastResultService =>
+            this.openClService.LastErrorMessage;
+        public string LastResultMemory =>
+            this.openClService.MemoryRegister?.LastErrorMessage ?? string.Empty;
+        public string LastResultCompiler => 
+            this.openClService.KernelCompiler?.LastErrorMessage ?? string.Empty;
+        public string LastResultKernelExecutioner => 
+            this.openClService.KernelExecutioner?.LastResultMessage ?? string.Empty;
+
+		public OpenClController(OpenClService openClService, ImageCollection imageCollection, AudioCollection audioCollection, IClipboard clipboard)
         {
             this.openClService = openClService;
             this.imageCollection = imageCollection;
@@ -280,10 +289,13 @@ namespace APICL.Api.Controllers
 
                 // Get image obj info
                 var info = await Task.Run(() => new ImageObjInfo(obj, null, sw.Elapsed));
-                if (!info.OnHost)
+                info.ErrorInfoService = this.LastResultService;
+                info.ErrorInfoMemory = this.LastResultMemory;
+                info.ErrorInfoCompiler = this.LastResultCompiler;
+                info.ErrorInfoExecutioner = this.LastResultKernelExecutioner;
+				if (!info.OnHost)
                 {
-                    return this.NotFound(
-                        "Failed to execute OpenCL kernel or image is not on the host after execution call.");
+                    return this.NotFound("Failed to execute OpenCL kernel or image is not on the host after execution call.");
                 }
 
                 // Optionally copy guid to clipboard
@@ -324,9 +336,10 @@ namespace APICL.Api.Controllers
             }
 
             bool temp = false;
+            var info = new AudioObjInfo(obj);
 
-            // Verify initialized
-            try
+			// Verify initialized
+			try
             {
                 if (!(await this.status).Initialized)
                 {
@@ -366,7 +379,12 @@ namespace APICL.Api.Controllers
             {
                 var result = await this.openClService.ExecuteAudioKernel(obj, kernel, version, chunkSize, overlap,
                     optionalArguments, true);
-            }
+
+				info.ErrorInfoService = this.LastResultService;
+				info.ErrorInfoMemory = this.LastResultMemory;
+				info.ErrorInfoCompiler = this.LastResultCompiler;
+				info.ErrorInfoExecutioner = this.LastResultKernelExecutioner;
+			}
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
@@ -382,7 +400,13 @@ namespace APICL.Api.Controllers
                 }
             }
 
-            return this.Created($"api/audio/audios/{obj.Guid}/info", new AudioObjInfo(obj, null, sw.Elapsed));
+            info = await Task.Run(() => new AudioObjInfo(obj, null, sw.Elapsed));
+			info.ErrorInfoService = this.LastResultService;
+			info.ErrorInfoMemory = this.LastResultMemory;
+			info.ErrorInfoCompiler = this.LastResultCompiler;
+			info.ErrorInfoExecutioner = this.LastResultKernelExecutioner;
+
+			return this.Created($"api/audio/audios/{obj.Guid}/info", info);
         }
 
     }

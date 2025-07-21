@@ -25,6 +25,10 @@ namespace APICL.OpenCl
 		private readonly object _memoryLock = new();
 		public List<ClMem> Memory = [];
 
+		public CLResultCode LastResultCode { get; private set; } = CLResultCode.Success;
+		public string LastResultCodeString => this.LastResultCode.ToString();
+		public string LastErrorMessage { get; private set; } = string.Empty;
+
 
 
 		// ----- ----- ----- CONSTRUCTORS ----- ----- ----- \\
@@ -179,6 +183,7 @@ namespace APICL.OpenCl
 
 			// Create buffer
 			CLBuffer buffer = CL.CreateBuffer<T>(this.Context, MemoryFlags.CopyHostPtr | MemoryFlags.ReadWrite, data, out CLResultCode error);
+			this.LastResultCode = error;
 			if (error != CLResultCode.Success)
 			{
 				this.Log("Error creating CL-Buffer", error.ToString());
@@ -212,7 +217,7 @@ namespace APICL.OpenCl
 			T[] data = new T[length];
 
 			// Read buffer
-			CLResultCode error = CL.EnqueueReadBuffer(
+			this.LastResultCode = CL.EnqueueReadBuffer(
 				this.QUE,
 				mem.Buffers.FirstOrDefault(),
 				true,
@@ -223,9 +228,9 @@ namespace APICL.OpenCl
 			);
 
 			// Check error
-			if (error != CLResultCode.Success)
+			if (this.LastResultCode != CLResultCode.Success)
 			{
-				this.Log("Failed to read buffer", error.ToString(), 1);
+				this.Log("Failed to read buffer", this.LastResultCode.ToString(), 1);
 				return [];
 			}
 
@@ -253,6 +258,7 @@ namespace APICL.OpenCl
 
 			// Create buffer
 			CLBuffer buffer = CL.CreateBuffer<T>(this.Context, MemoryFlags.CopyHostPtr | MemoryFlags.ReadWrite, data, out CLResultCode error);
+			this.LastResultCode = error;
 			if (error != CLResultCode.Success)
 			{
 				this.Log("Error creating CL-Buffer", error.ToString());
@@ -292,6 +298,7 @@ namespace APICL.OpenCl
 			for (int i = 0; i < chunks.Count; i++)
 			{
 				buffers[i] = CL.CreateBuffer(this.Context, MemoryFlags.CopyHostPtr | MemoryFlags.ReadWrite, chunks[i], out CLResultCode error);
+				this.LastResultCode = error;
 				if (error != CLResultCode.Success)
 				{
 					this.Log("Error creating CL-Buffer for chunk " + i);
@@ -331,7 +338,7 @@ namespace APICL.OpenCl
 			for (int i = 0; i < mem.Count; i++)
 			{
 				T[] chunk = new T[lengths[i].ToInt64()];
-				CLResultCode error = CL.EnqueueReadBuffer(
+				this.LastResultCode = CL.EnqueueReadBuffer(
 					this.QUE,
 					mem.Buffers[i],
 					true,
@@ -341,9 +348,9 @@ namespace APICL.OpenCl
 					out CLEvent @event
 				);
 
-				if (error != CLResultCode.Success)
+				if (this.LastResultCode != CLResultCode.Success)
 				{
-					this.Log("Failed to read buffer for chunk " + i, error.ToString(), 1);
+					this.Log("Failed to read buffer for chunk " + i, this.LastResultCode.ToString(), 1);
 					return [];
 				}
 
@@ -371,6 +378,7 @@ namespace APICL.OpenCl
 			for (int i = 0; i < count; i++)
 			{
 				buffers[i] = CL.CreateBuffer<T>(this.Context, MemoryFlags.CopyHostPtr | MemoryFlags.ReadWrite, new T[size.ToInt64()], out CLResultCode error);
+				this.LastResultCode = error;
 				if (error != CLResultCode.Success)
 				{
 					this.Log("Error creating CL-Buffer for group " + i, error.ToString(), 1);
@@ -403,10 +411,10 @@ namespace APICL.OpenCl
 			try
 			{
 				// Get maximum available memory on device
-				CLResultCode error = CL.GetDeviceInfo(this.Device, DeviceInfo.GlobalMemorySize, out byte[] code);
-				if (error != CLResultCode.Success)
+				this.LastResultCode = CL.GetDeviceInfo(this.Device, DeviceInfo.GlobalMemorySize, out byte[] code);
+				if (this.LastResultCode != CLResultCode.Success)
 				{
-					this.Log("Failed to get device memory info", error.ToString(), 1);
+					this.Log("Failed to get device memory info", this.LastResultCode.ToString(), 1);
 					return -1;
 				}
 

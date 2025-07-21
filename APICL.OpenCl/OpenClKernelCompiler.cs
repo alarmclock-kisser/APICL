@@ -24,6 +24,10 @@ namespace APICL.OpenCl
 
 		public Dictionary<CLKernel, string> KernelCache = [];
 
+		public CLResultCode LastResultCode { get; private set; } = CLResultCode.Success;
+		public string LastResultCodeString => this.LastResultCode.ToString();
+		public string LastErrorMessage { get; private set; } = string.Empty;
+
 
 
 		// ----- ----- ----- LAMBDA ----- ----- ----- \\
@@ -231,9 +235,10 @@ namespace APICL.OpenCl
 
 			// Create program
 			CLProgram program = CL.CreateProgramWithSource(this.Context, code, out CLResultCode error);
-			if (error != CLResultCode.Success)
+			this.LastResultCode = this.LastResultCode;
+			if (this.LastResultCode != CLResultCode.Success)
 			{
-				this.Log("Error creating program from source: " + error.ToString());
+				this.Log("Error creating program from source: " + this.LastResultCode.ToString());
 				return null;
 			}
 
@@ -249,16 +254,16 @@ namespace APICL.OpenCl
 			CL.BuildProgram(program, 1, [this.Device], buildOptions, 0, IntPtr.Zero);
 
 			// Build program
-			error = CL.BuildProgram(program, [this.Device], buildOptions, callback);
-			if (error != CLResultCode.Success)
+			this.LastResultCode = CL.BuildProgram(program, [this.Device], buildOptions, callback);
+			if (this.LastResultCode != CLResultCode.Success)
 			{
-				this.Log("Error building program: " + error.ToString());
+				this.Log("Error building program: " + this.LastResultCode.ToString());
 
 				// Get build log
-				CLResultCode error2 = CL.GetProgramBuildInfo(program, this.Device, ProgramBuildInfo.Log, out byte[] buildLog);
-				if (error2 != CLResultCode.Success)
+				this.LastResultCode = CL.GetProgramBuildInfo(program, this.Device, ProgramBuildInfo.Log, out byte[] buildLog);
+				if (this.LastResultCode != CLResultCode.Success)
 				{
-					this.Log("Error getting build log: " + error2.ToString());
+					this.Log("Error getting build log: " + this.LastResultCode.ToString());
 				}
 				else
 				{
@@ -272,15 +277,16 @@ namespace APICL.OpenCl
 
 			// Create kernel
 			CLKernel kernel = CL.CreateKernel(program, kernelName, out error);
-			if (error != CLResultCode.Success)
+			this.LastResultCode = error;
+			if (this.LastResultCode != CLResultCode.Success)
 			{
-				this.Log("Error creating kernel: " + error.ToString());
+				this.Log("Error creating kernel: " + this.LastResultCode.ToString());
 
 				// Get build log
-				CLResultCode error2 = CL.GetProgramBuildInfo(program, this.Device, ProgramBuildInfo.Log, out byte[] buildLog);
-				if (error2 != CLResultCode.Success)
+				this.LastResultCode = CL.GetProgramBuildInfo(program, this.Device, ProgramBuildInfo.Log, out byte[] buildLog);
+				if (this.LastResultCode != CLResultCode.Success)
 				{
-					this.Log("Error getting build log: " + error2.ToString());
+					this.Log("Error getting build log: " + this.LastResultCode.ToString());
 				}
 				else
 				{
@@ -314,10 +320,10 @@ namespace APICL.OpenCl
 			}
 
 			// Get kernel info
-			CLResultCode error = CL.GetKernelInfo(kernel.Value, KernelInfo.NumberOfArguments, out byte[] argCountBytes);
-			if (error != CLResultCode.Success)
+			this.LastResultCode = CL.GetKernelInfo(kernel.Value, KernelInfo.NumberOfArguments, out byte[] argCountBytes);
+			if (this.LastResultCode != CLResultCode.Success)
 			{
-				//this.Log("Error getting kernel info: " + error.ToString());
+				this.Log("Error getting kernel info: " + this.LastResultCode.ToString());
 				return arguments;
 			}
 
@@ -328,16 +334,16 @@ namespace APICL.OpenCl
 			for (int i = 0; i < argCount; i++)
 			{
 				// Get argument info type name
-				error = CL.GetKernelArgInfo(kernel.Value, (uint) i, KernelArgInfo.TypeName, out byte[] argTypeBytes);
-				if (error != CLResultCode.Success)
+				this.LastResultCode = CL.GetKernelArgInfo(kernel.Value, (uint) i, KernelArgInfo.TypeName, out byte[] argTypeBytes);
+				if (this.LastResultCode != CLResultCode.Success)
 				{
 					//this.Log("Error getting kernel argument info: " + error.ToString());
 					continue;
 				}
 
 				// Get argument info arg name
-				error = CL.GetKernelArgInfo(kernel.Value, (uint) i, KernelArgInfo.Name, out byte[] argNameBytes);
-				if (error != CLResultCode.Success)
+				this.LastResultCode = CL.GetKernelArgInfo(kernel.Value, (uint) i, KernelArgInfo.Name, out byte[] argNameBytes);
+				if (this.LastResultCode != CLResultCode.Success)
 				{
 					//this.Log("Error getting kernel argument info: " + error.ToString());
 					continue;
@@ -733,7 +739,7 @@ namespace APICL.OpenCl
 			// Release kernel
 			if (this.Kernel != null)
 			{
-				CL.ReleaseKernel(this.Kernel.Value);
+				this.LastResultCode = CL.ReleaseKernel(this.Kernel.Value);
 				this.Kernel = null;
 			}
 

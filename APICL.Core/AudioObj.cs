@@ -873,7 +873,7 @@ namespace APICL.Core
 			{
 				outPath = Path.Combine(
 					Path.GetTempPath(),
-					$"{this.Name}_{DateTime.Now:yyyyMMdd_HHmmss}.wav");
+					$"{this.Name}_[{this.Bpm:F2}].wav");
 			}
 
 			// Build final file path

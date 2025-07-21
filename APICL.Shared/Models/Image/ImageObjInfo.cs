@@ -26,8 +26,10 @@ namespace APICL.Shared
         public TimeSpan LastLoadingTimeSpan = TimeSpan.Zero;
         public string LastLoadingTime { get; set; } = string.Empty;
 
-        public string ErrorInfo { get; set; } = string.Empty;
-
+        public string ErrorInfoService { get; set; } = string.Empty;
+        public string ErrorInfoMemory { get; set; } = string.Empty;
+        public string ErrorInfoCompiler { get; set; } = string.Empty;
+        public string ErrorInfoExecutioner { get; set; } = string.Empty;
 
 
 		public ImageObjInfo()
