@@ -24,6 +24,14 @@
     <RadzenText Text="@selectedInfoString" TextStyle="TextStyle.Body1" Style="max-width: 600px; overflow-wrap: break-word; white-space: pre-wrap; font-family: Arial;" />
 </RadzenStack>
 
+<!-- Last error messages -->
+<RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.1rem" class="rz-p-sm-12" Reverse="false">
+    <RadzenText Text="@selectedAudioInfo.ErrorInfoService" TextStyle="TextStyle.Body1" Style="max-width: 600px; overflow-wrap: break-word; white-space: pre-wrap; font-family: Arial;" />
+    <RadzenText Text="@selectedAudioInfo.ErrorInfoMemory" TextStyle="TextStyle.Body1" Style="max-width: 600px; overflow-wrap: break-word; white-space: pre-wrap; font-family: Arial;" />
+    <RadzenText Text="@selectedAudioInfo.ErrorInfoCompiler" TextStyle="TextStyle.Body1" Style="max-width: 600px; overflow-wrap: break-word; white-space: pre-wrap; font-family: Arial;" />
+    <RadzenText Text="@selectedAudioInfo.ErrorInfoExecutioner" TextStyle="TextStyle.Body1" Style="max-width: 600px; overflow-wrap: break-word; white-space: pre-wrap; font-family: Arial;" />
+</RadzenStack>
+
 <!-- Audio selection section: DropDown with audio names + upload button + download button + remove button -->
 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.1rem" class="rz-p-sm-12" Reverse="false">
     <RadzenListBox TValue="Guid" Data="@audioInfos" TextProperty="Entry" ValueProperty="Guid"
@@ -224,9 +232,9 @@
             false, allowScopedSession
             );
 
-            if (result.Guid == Guid.Empty || !string.IsNullOrEmpty(result.ErrorInfo))
+            if (result.Guid == Guid.Empty)
             {
-                await AddLog($"Timestretch execution failed ({SelectedKernelName}.cl) with info: '{result.ErrorInfo}'").ConfigureAwait(false);
+                await AddLog($"Timestretch execution failed ({SelectedKernelName}.cl) with info: '{result.ErrorInfoExecutioner}'").ConfigureAwait(false);
                 await LoadWaveform();
             }
             else
@@ -242,8 +250,8 @@
         finally
         {
             IsProcessing = false;
-            ProcessingWasSuccess = result.Guid != Guid.Empty && string.IsNullOrEmpty(result.ErrorInfo);
-            SelectedAudioGuid = result.Guid;
+            ProcessingWasSuccess = result.Guid != Guid.Empty;
+            //SelectedAudioGuid = result.Guid;
             await RefreshInfos();
         }
     }

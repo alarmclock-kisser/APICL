@@ -30,7 +30,7 @@ namespace APICL.Shared
         public string ErrorInfoMemory { get; set; } = string.Empty;
         public string ErrorInfoCompiler { get; set; } = string.Empty;
         public string ErrorInfoExecutioner { get; set; } = string.Empty;
-
+		public String ErrorInfo { get; set; }
 
 		public ImageObjInfo()
 		{

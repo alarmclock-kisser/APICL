@@ -574,7 +574,7 @@ namespace APICL.OpenCl
 			);
 			if (this.LastResultCode != CLResultCode.Success)
 			{
-				this.Log("this.LastResultCode executing kernel: " + this.LastResultCode.ToString(), "", 2);
+				this.Log("Error executing kernel: " + this.LastResultCode.ToString(), "", 2);
 				return pointer;
 			}
 
@@ -582,7 +582,7 @@ namespace APICL.OpenCl
 			this.LastResultCode = CL.WaitForEvents(1, [evt]);
 			if (this.LastResultCode != CLResultCode.Success)
 			{
-				this.Log("this.LastResultCode waiting for kernel to finish: " + this.LastResultCode.ToString(), "", 2);
+				this.Log("Error waiting for kernel to finish: " + this.LastResultCode.ToString(), "", 2);
 				return pointer;
 			}
 
@@ -590,7 +590,7 @@ namespace APICL.OpenCl
 			this.LastResultCode = CL.ReleaseEvent(evt);
 			if (this.LastResultCode != CLResultCode.Success)
 			{
-				this.Log("this.LastResultCode releasing event: " + this.LastResultCode.ToString(), "", 2);
+				this.Log("Error releasing event: " + this.LastResultCode.ToString(), "", 2);
 				return pointer;
 			}
 
